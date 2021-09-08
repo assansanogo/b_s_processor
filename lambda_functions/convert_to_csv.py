@@ -185,7 +185,7 @@ def liberta_leasing_convert_handler(event, context):
     output_format = event["format"]
     
     # download file locally and keep the filename
-    f_name = download_url(url)
+    f_name = download_url(nput_file_url)
     
     try:
         # when no error :process and returns json
