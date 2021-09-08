@@ -29,7 +29,7 @@ if __name__ =='__main__':
     liberta_leasing_parser.add_argument('--input_file', action='store', type=str, required=True)
     liberta_leasing_parser.add_argument('--output_format', action='store', type=str, required=True, default='csv')
     
-    args = my_parser.parse_args()
+    args = liberta_leasing_parser.parse_args()
     f_name = args.input_file
     output_format = args.output_format
     process_bank_statements(f_name, output_format)
