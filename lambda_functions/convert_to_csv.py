@@ -8,7 +8,6 @@ import pandas as pd
 import numpy as np
 
 
-
 GT_HEADER = ["Trans. Date","Value. Date","Reference","Debits","Credits","Balance","Originating Branch","Remarks"]
 
 def extract_list_dataframes(dataframes_list, out_path):
@@ -77,9 +76,25 @@ def postprocess(m_df, transaction_not_null):
         for key in operation_descr.keys():
             operation_descr[key] = (''.join(operation_descr[key])).replace('\r',' ')
 
-    return operation_descr                       
+    return operation_descr     
+
+
+def recombine_dataframe(operations_description_dict, transaction_not_null, account_type, bank_id):
+    '''
+    reconstruct the final dataset with all original transaction information plus the annotations
+    '''
+    # Dataframe of the transactions
+    if  not 'nan' in self.descr.keys():
+        annotations = pd.DataFrame.from_dict(operations_description_dict,  orient='index', columns=['Remarks_processed'])
+        dataset_recombined = pd.concat([transaction_not_null.reset_index(drop=True), annotations.reset_index(drop=True)], axis=1)
+        dataset_recombined['ACCOUNT_TYPE'] = account_type
+        dataset_recombined['BANK_ID'] = bank_id
+
+        dataset_recombined = self.dataset_recombined[['Trans. Date','Reference','Value. Date','Debits','Credits','Balance','Remarks_processed','ACCOUNT_TYPE','BANK_ID']]
+    return dataset_recombined
+
                            
-def process_bank_statements(b_statement, out_format ='csv'):
+def process_bank_statements(b_statement, out_format ='csv',ll_bank_id = "GTBANK", ll_account_type="savings):
     '''
     Method to transform a list of Bank statements paths into a list of .CSV
     '''
@@ -92,33 +107,39 @@ def process_bank_statements(b_statement, out_format ='csv'):
                            
     #loop over the list of bank statements 
     for idx, bk_st in tqdm(enumerate(b_statement)):
-        #input filename
+        # input filename
         inp = bk_st
         local_inp = inp.split("/")[-1]
         shutil.copy(inp, local_inp )
         
-        #output filename
+        # output filename
         out = bk_st.replace(".pdf","_output.csv")
         
-        # convert to csv by default
+        # 1. convert to csv by default
         df_list = tabula.read_pdf(bk_st, multiple_tables=True, lattice= True, pages='all')
         header_shape = df_list[1].shape[1]
         df_list = [datafram for datafram in df_list if (header_shape !=2 and datafram.shape[0]!=0) ]
                            
-        # extract dataframes & save to disk for debug                 
+        # 2. extract dataframes (& save to disk for debug)                 
         df_list = extract_list_dataframes(df_list, out)
         
-        # concat each dataframe
+        # 3. concat each dataframe into 1
         master_df = pd.concat(df_list)
                            
-        # clean non informative cells
+        # 4. clean non informative cells
         master_df = simple_df_clean(master_df)
         
-        # store informations about the transactions
+        # 5. store informations about the transactions
         tr_df, tr_idx, max_tr_idx = transactions(master_df)
                      
-        # postprocessing of transactions 
-        postprocess(master_df, tr_df)
+        # 6. postprocessing of transactions 
+        operations = postprocess(master_df, tr_df)
+        
+        # 7. cleaned dataframe with aligned transactions
+        final_dataframe = recombine_dataframe(operations, tr_df, ll_account_type, bank_id=ll_bank_id)
+        
+        # 8. save to disk for debug
+        final_dataframe.to_csv(out, sep=';', index = False, header=True)
         
         # json response
         response[str(idx)] = {"name":bk_st, "body":[d.reset_index(drop=True).to_json() for d in df_list]}
