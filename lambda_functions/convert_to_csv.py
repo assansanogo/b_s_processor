@@ -20,7 +20,7 @@ def process_bank_statements(b_statements_gt_bank, out_format ='csv'):
         #output filename
         out = bk_st.replace(".pdf","_output.csv")
         # convert to csv by default
-        tabula.convert_into(inp, out, output_format=out_format)
+        tabula.convert_into(inp, out, out_format)
         
         
         
