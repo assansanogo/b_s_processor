@@ -151,10 +151,13 @@ def process_bank_statements(b_statement, out_format ='csv',ll_bank_id = "GTBANK"
         final_dataframe = recombine_dataframe(operations, tr_df, ll_account_type, bank_id=ll_bank_id)
         
         # 8. save to disk for debug
-        final_dataframe.to_csv(out, sep=';', index = False, header=True)
+        final_dataframe.to_csv(out, 
+                               sep=';', 
+                               index = False, header=True)
         
         # json response
-        response[str(idx)] = {"name":bk_st, "body":final_dataframe.to_json()}
+        response[str(idx)] = {"name":bk_st, 
+                              "body":final_dataframe.to_json(orient="records")}
                            
         return response                  
                             
