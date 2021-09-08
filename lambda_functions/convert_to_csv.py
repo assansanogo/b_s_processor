@@ -106,7 +106,7 @@ def recombine_dataframe(operations_description_dict, transaction_not_null, accou
     return dataset_recombined
 
                            
-def process_bank_statements(b_statement, out_format ='csv',ll_bank_id = "GTBANK", ll_account_type="savings):
+def process_bank_statements(b_statement, out_format ='csv',ll_bank_id = "GTBANK", ll_account_type="savings"):
     '''
     Method to transform a list of Bank statements paths into a list of .CSV
     '''
