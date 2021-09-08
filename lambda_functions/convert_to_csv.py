@@ -10,7 +10,7 @@ def process_bank_statements(b_statements_gt_bank, out_format ='csv'):
     if type(b_statements_gt_bank) =='str':
       b_statements_gt_bank = list(b_statements_gt_bank)
     n_statements = len(b_statements_gt_bank)
-    assert len(n_statements) !=0
+    assert n_statements !=0
     
     #loop over the list of bank statements 
     for bk_st in tqdm(b_statements_gt_bank):
