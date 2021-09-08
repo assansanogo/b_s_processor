@@ -23,7 +23,7 @@ def process_bank_statements(b_statements_gt_bank, out_format ='csv'):
         
         
         
-if name =='__main__':
+if __name__ =='__main__':
     
     liberta_leasing_parser = argparse.ArgumentParser()
     liberta_leasing_parser.add_argument('--input_file', action='store', type=str, required=True)
