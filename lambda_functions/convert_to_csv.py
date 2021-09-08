@@ -1,6 +1,7 @@
 import glob2
 import tabula
 import argparse
+from tqdm import tqdm
 
 def process_bank_statements(b_statements_gt_bank, out_format ='csv'):
     '''
