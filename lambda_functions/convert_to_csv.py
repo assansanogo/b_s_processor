@@ -39,7 +39,7 @@ def transactions(m_df):
     function which keeps transactions index, the last transaction idx and adds an artificial last transaction
     '''
     transactions_df = m_df[~m_df["Trans. Date"].isna()].copy()
-    transactions_idx = list(transactions_df.index())
+    transactions_idx = list(transactions_df.index)
     max_transactions_idx = max(transactions_idx)
     transactions_df.loc[max_transactions_idx + 1,'Trans. Date'] = '99-Apr-9999'
     return  transactions_df,transactions_idx,max_transactions_idx
@@ -124,10 +124,10 @@ def process_bank_statements(b_statement, out_format ='csv',ll_bank_id = "GTBANK"
         df_list = extract_list_dataframes(df_list, out)
         
         # 3. concat each dataframe into 1
-        master_df = pd.concat(df_list)
+        master_df = pd.concat(df_list).reset_index(drop=True)
                            
         # 4. clean non informative cells
-        master_df = simple_df_clean(master_df)
+        master_df = simple_df_clean(master_df).reset_index(drop=True)
         
         # 5. store informations about the transactions
         tr_df, tr_idx, max_tr_idx = transactions(master_df)
