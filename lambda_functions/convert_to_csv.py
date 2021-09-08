@@ -122,7 +122,7 @@ def process_bank_statements(b_statement, out_format ='csv',ll_bank_id = "GTBANK"
         # input filename
         inp = bk_st
         local_inp = inp.split("/")[-1]
-        shutil.copy(inp, local_inp )
+        shutil.copy(inp, local_inp)
         
         # output filename
         out = bk_st.replace(".pdf","_output.csv")
@@ -174,11 +174,30 @@ def download_url(url):
     return file_name
                             
 def liberta_leasing_convert_handler(event, context):
-                            
+    '''
+    formatting of the lambda handler to be compatible with by AWS
+    '''
+    # information extracted from the event payload
     input_file_url = event["url"]
     output_format = event["format"]
+    
+    # download file locally and keep the filename
     f_name = download_url(url)
-    return process_bank_statements(f_name, output_format)
+    
+    try:
+        # when no error :process and returns json
+        processed_dataframe = process_bank_statements(f_name, output_format)
+        return {'headers': {Content-Type':'application/json'}, 
+                'statusCode':200,
+                'body':json.dumps(processed_dataframe))}
+       
+    except Exception as e :
+        # in case of errors return a json with the error description
+        return {'headers': {Content-Type':'application/json'}, 
+                'statusCode':400,
+                'body':json.dumps(str(e)))}
+                
+    #return process_bank_statements(f_name, output_format)
         
 if __name__ =='__main__':
     
