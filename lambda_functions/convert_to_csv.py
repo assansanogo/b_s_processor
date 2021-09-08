@@ -5,11 +5,25 @@ import tabula
 import argparse
 from tqdm import tqdm
 import pandas as pd
+import numpy as np
 
 
 
 GT_HEADER = ["Trans. Date","Value. Date","Reference","Debits","Credits","Balance","Originating Branch","Remarks"]
 
+def extract_list_dataframes(dataframes_list, out_path):
+    
+    for i,d in enumerate(dataframes_list):
+        try:
+            # set the header to each sub dataframe
+            d.columns = GT_HEADER
+            # save locally for debug purposes (each extracted dataframe has a positional suffix (=index))
+            d.to_csv(out_path.replace(".csv",f"{str(i)}.csv"), sep=';')
+        except Exception as e:
+            # if the dataframe is malformed remove it from the list of processable dataframes
+            print(i)
+            dataframes_list.remove(d)
+    return dataframes_list
 
 def simple_df_clean(m_df):
     '''
@@ -25,12 +39,45 @@ def transactions(m_df):
     '''
     function which keeps transactions index, the last transaction idx and adds an artificial last transaction
     '''
-    transactions_df = m_df[~m_df["Trans. Date"].isna().copy()
+    transactions_df = m_df[~m_df["Trans. Date"].isna()].copy()
     transactions_idx = list(transactions_df.index())
     max_transactions_idx = max(transactions_idx)
-    transactions_df.loc[max_idx + 1,'Trans. Date'] = '99-Apr-9999'
+    transactions_df.loc[max_transactions_idx + 1,'Trans. Date'] = '99-Apr-9999'
     return  transactions_df,transactions_idx,max_transactions_idx
                            
+                           
+def postprocess(m_df, transaction_not_null):
+    '''
+    reconstruct the financial operations which overflow to the next line in 1 single text
+    '''
+
+    # all the indexes of the transaction with dates
+    index_with_dates = transaction_not_null.index
+
+    operation_descr = {}
+    for step_date in index_with_dates:
+        operation_descr[str(step_date)] = []
+    
+    # safety check : index is not nan                       
+    if not np.isnan(index_with_dates.values[0]):
+
+        for idx, step in enumerate(index_with_dates):
+            # iteration until we reach the last recorded transaction (excluded)
+            if idx < len(index_with_dates)-1:
+                for ind in range(index_with_dates[idx], index_with_dates[idx+1], 1):
+                    if str(m_df.loc[ind, 'Remarks']) != 'nan':
+                        operation_descr[str(step)] += [str(m_df.loc[ind, 'Remarks'])]
+                           
+            # last iteration: after reaching the last recorded transaction until the artificial last operation
+            else:
+                for ind in range(index_with_dates[idx], m_df.shape[0], 1):
+                    if str(m_df.loc[ind, 'Remarks']) != 'nan':
+                        operation_descr[str(step)] += [str(m_df.loc[ind, 'Remarks'])]
+        # final cleanup (remove carriage to prevent csv malformation)
+        for key in operation_descr.keys():
+            operation_descr[key] = (''.join(operation_descr[key])).replace('\r',' ')
+
+    return operation_descr                       
                            
 def process_bank_statements(b_statement, out_format ='csv'):
     '''
@@ -56,17 +103,10 @@ def process_bank_statements(b_statement, out_format ='csv'):
         # convert to csv by default
         df_list = tabula.read_pdf(bk_st, multiple_tables=True, lattice= True, pages='all')
         header_shape = df_list[1].shape[1]
-        df_list = [datafram for datafram in df_list if (datafram.shape[1] !=2 and datafram.shape[0]!=0) ]
-        for i,d in enumerate(df_list):
-            try:
-                # set the header to each sub dataframe
-                d.columns = GT_HEADER
-                # save locally for debug purposes
-                d.to_csv(out.replace(".csv",f"{str(i)}.csv"), sep=';')
-            except Exception as e:
-                # if the dataframe is malformed remove it from the list of processable dataframes
-                print(i)
-                df_list.remove(d)
+        df_list = [datafram for datafram in df_list if (header_shape !=2 and datafram.shape[0]!=0) ]
+                           
+        # extract dataframes & save to disk for debug                 
+        df_list = extract_list_dataframes(df_list, out)
         
         # concat each dataframe
         master_df = pd.concat(df_list)
@@ -76,9 +116,13 @@ def process_bank_statements(b_statement, out_format ='csv'):
         
         # store informations about the transactions
         tr_df, tr_idx, max_tr_idx = transactions(master_df)
+                     
+        # postprocessing of transactions 
+        postprocess(master_df, tr_df)
         
         # json response
         response[str(idx)] = {"name":bk_st, "body":[d.reset_index(drop=True).to_json() for d in df_list]}
+                           
         return response
         
         
