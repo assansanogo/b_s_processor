@@ -45,13 +45,13 @@ def transactions(m_df):
     return  transactions_df,transactions_idx,max_transactions_idx
                            
                            
-def postprocess(m_df, transaction_not_null):
+def postprocess(m_df, transaction_not_null_df):
     '''
     reconstruct the financial operations which overflow to the next line in 1 single text
     '''
 
     # all the indexes of the transaction with dates
-    index_with_dates = transaction_not_null.index
+    index_with_dates = transaction_not_null_df.index
 
     operation_descr = {}
     for step_date in index_with_dates:
@@ -76,7 +76,7 @@ def postprocess(m_df, transaction_not_null):
         for key in operation_descr.keys():
             operation_descr[key] = (''.join(operation_descr[key])).replace('\r',' ')
 
-    return operation_descr     
+    return operation_descr         
 
 
 def recombine_dataframe(operations_description_dict, transaction_not_null, account_type, bank_id):
@@ -84,13 +84,13 @@ def recombine_dataframe(operations_description_dict, transaction_not_null, accou
     reconstruct the final dataset with all original transaction information plus the annotations
     '''
     # Dataframe of the transactions
-    if  not 'nan' in self.descr.keys():
+    if  not 'nan' in operations_description_dict.keys():
         annotations = pd.DataFrame.from_dict(operations_description_dict,  orient='index', columns=['Remarks_processed'])
         dataset_recombined = pd.concat([transaction_not_null.reset_index(drop=True), annotations.reset_index(drop=True)], axis=1)
         dataset_recombined['ACCOUNT_TYPE'] = account_type
         dataset_recombined['BANK_ID'] = bank_id
 
-        dataset_recombined = self.dataset_recombined[['Trans. Date','Reference','Value. Date','Debits','Credits','Balance','Remarks_processed','ACCOUNT_TYPE','BANK_ID']]
+        dataset_recombined = dataset_recombined[['Trans. Date','Reference','Value. Date','Debits','Credits','Balance','Remarks_processed','ACCOUNT_TYPE','BANK_ID']]
     return dataset_recombined
 
                            
@@ -142,7 +142,7 @@ def process_bank_statements(b_statement, out_format ='csv',ll_bank_id = "GTBANK"
         final_dataframe.to_csv(out, sep=';', index = False, header=True)
         
         # json response
-        response[str(idx)] = {"name":bk_st, "body":[d.reset_index(drop=True).to_json() for d in df_list]}
+        response[str(idx)] = {"name":bk_st, "body":final_dataframe.to_json()}
                            
         return response
         
@@ -156,4 +156,4 @@ if __name__ =='__main__':
     args = liberta_leasing_parser.parse_args()
     f_name = args.input_file
     output_format = args.output_format
-    process_bank_statements(f_name, output_format)
+    print(process_bank_statements(f_name, output_format))
