@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import glob2
 import os
 import shutil
@@ -6,6 +8,16 @@ import argparse
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
+
+
+__author__ = "Assan Sanogo"
+__copyright__ = "Copyright 2007, Liberta Leasing"
+__credits__ = ["Liberta Leasing", "Assan Sanogo"]
+__license__ = "private"
+__version__ = "0.1"
+__maintainer__ = "Assan Sanogo"
+__email__ = "predicteev@gmail.com"
+__status__ = "Production"
 
 
 GT_HEADER = ["Trans. Date","Value. Date","Reference","Debits","Credits","Balance","Originating Branch","Remarks"]
