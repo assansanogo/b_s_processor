@@ -1,4 +1,5 @@
 import glob2
+import shutil
 import tabula
 import argparse
 from tqdm import tqdm
@@ -17,6 +18,9 @@ def process_bank_statements(b_statements_gt_bank, out_format ='csv'):
     for bk_st in tqdm(b_statements_gt_bank):
         #input filename
         inp = bk_st
+        local_inp = inp.split("/")[-1]
+        shutil.copy2(local_inp, os.getcwd())
+
         #output filename
         out = bk_st.replace(".pdf","_output.csv")
         # convert to csv by default
