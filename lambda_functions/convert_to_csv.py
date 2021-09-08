@@ -156,8 +156,29 @@ def process_bank_statements(b_statement, out_format ='csv',ll_bank_id = "GTBANK"
         # json response
         response[str(idx)] = {"name":bk_st, "body":final_dataframe.to_json()}
                            
-        return response
-        
+        return response                  
+                            
+def download_url(url):
+    '''
+    utility funcction which downloads pdf to local environment
+    '''
+    # data is going to be read as stream
+    chunk_size=2000
+    r = requests.get(url, stream=True)
+    # the pdf filename is extracted from the presigned url
+    file_name = [el for el in url.split("/") if ".pdf" in el][0]
+    # open a file to dump the stream in
+    with open(f'/tmp/{file_name}', 'wb') as fd:
+        for chunk in r.iter_content(chunk_size):
+            fd.write(chunk)
+    return file_name
+                            
+def liberta_leasing_convert_handler(event, context):
+                            
+    input_file_url = event["url"]
+    output_format = event["format"]
+    f_name = download_url(url)
+    return process_bank_statements(f_name, output_format)
         
 if __name__ =='__main__':
     
