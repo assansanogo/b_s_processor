@@ -189,7 +189,7 @@ def liberta_leasing_convert_handler(event, context):
         processed_dataframe = process_bank_statements(f_name, output_format)
         return {'headers': {'Content-Type':'application/json'}, 
                 'statusCode': 200,
-                'body': json.dumps(processed_dataframe))}
+                'body': json.dumps(processed_dataframe)}
        
     except Exception as e :
         # in case of errors return a json with the error description
