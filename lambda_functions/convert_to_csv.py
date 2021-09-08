@@ -1,4 +1,5 @@
 import glob2
+import os
 import shutil
 import tabula
 import argparse
@@ -10,7 +11,7 @@ def process_bank_statements(b_statements_gt_bank, out_format ='csv'):
     '''
     # check the type of b_statements_gt_bank
     if type(b_statements_gt_bank) =='str':
-      b_statements_gt_bank = list(b_statements_gt_bank)
+        b_statements_gt_bank = list(b_statements_gt_bank)
     n_statements = len(b_statements_gt_bank)
     assert n_statements !=0
     
@@ -38,4 +39,3 @@ if __name__ =='__main__':
     f_name = args.input_file
     output_format = args.output_format
     process_bank_statements(f_name, output_format)
-  
