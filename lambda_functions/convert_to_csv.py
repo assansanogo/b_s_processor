@@ -175,7 +175,7 @@ def download_url(url):
     with open(f'/tmp/{file_name}', 'wb') as fd:
         for chunk in r.iter_content(chunk_size):
             fd.write(chunk)
-    return file_name
+    return f'/tmp/{file_name}'
                             
 def liberta_leasing_convert_handler(event, context):
     '''
