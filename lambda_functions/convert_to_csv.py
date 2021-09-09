@@ -187,9 +187,8 @@ def liberta_leasing_convert_handler(event, context):
 
     # when no error :process and returns json
 
-    return {'headers': {'Content-Type':'application/json'}, 
-            'statusCode': 200,
-            'body': json.dumps(event['body'])}
+    return({ 'statusCode': 200,
+            'body': json.dumps(event['body'])})
                             
 def lliberta_leasing_convert_handler(event, context):
     '''
