@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 import requests
 import json
+import base64
 
 __author__ = "Assan Sanogo"
 __copyright__ = "Copyright 2007, Liberta Leasing"
@@ -183,6 +184,7 @@ def liberta_leasing_convert_handler(event, context):
     formatting of the lambda handler to be compatible with by AWS
     '''
     # information extracted from the event payload
+    event = json.loads(base64.b64decode(event).decode('utf-8'))
     input_file_url = event["url"]
     output_format = event["format"]
     
