@@ -123,13 +123,14 @@ def process_bank_statements(b_statement, out_format ='csv',ll_bank_id = "GTBANK"
         # input filename
         inp = bk_st
         local_inp = inp.split("/")[-1]
-        shutil.copy(inp, local_inp)
+        #shutil.copy(inp, local_inp)
+        os.chdir("/tmp")
         
         # output filename
         out = bk_st.replace(".pdf","_output.csv")
         
         # 1. convert to csv by default
-        df_list = tabula.read_pdf(bk_st, multiple_tables=True, lattice= True, pages='all')
+        df_list = tabula.read_pdf(local_inp, multiple_tables=True, lattice= True, pages='all')
         header_shape = df_list[1].shape[1]
         df_list = [datafram for datafram in df_list if (header_shape !=2 and datafram.shape[0]!=0) ]
                            
