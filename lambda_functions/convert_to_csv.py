@@ -9,6 +9,7 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import requests
+import json
 
 __author__ = "Assan Sanogo"
 __copyright__ = "Copyright 2007, Liberta Leasing"
