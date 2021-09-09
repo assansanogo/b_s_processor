@@ -178,8 +178,20 @@ def download_url(url):
         for chunk in r.iter_content(chunk_size):
             fd.write(chunk)
     return f'/tmp/{file_name}'
-                            
+
 def liberta_leasing_convert_handler(event, context):
+    '''
+    formatting of the lambda handler to be compatible with by AWS
+    '''
+    # information extracted from the event payload
+
+    # when no error :process and returns json
+
+    return {'headers': {'Content-Type':'application/json'}, 
+            'statusCode': 200,
+            'body': json.dumps(event['body'])}
+                            
+def lliberta_leasing_convert_handler(event, context):
     '''
     formatting of the lambda handler to be compatible with by AWS
     '''
