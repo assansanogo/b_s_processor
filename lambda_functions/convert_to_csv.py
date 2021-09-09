@@ -179,7 +179,7 @@ def download_url(url):
             fd.write(chunk)
     return f'/tmp/{file_name}'
 
-def liberta_leasing_convert_handler(event, context):
+def lliberta_leasing_convert_handler(event, context):
     '''
     formatting of the lambda handler to be compatible with by AWS
     '''
@@ -190,12 +190,12 @@ def liberta_leasing_convert_handler(event, context):
     return({ 'statusCode': 200,
             'body': json.dumps(base64.b64decode(event['body']).decode('utf-8'))})
                             
-def lliberta_leasing_convert_handler(event, context):
+def liberta_leasing_convert_handler(event, context):
     '''
     formatting of the lambda handler to be compatible with by AWS
     '''
     # information extracted from the event payload
-    event = json.loads(base64.b64decode(event.json()).decode('utf-8'))
+    event = json.loads(base64.b64decode(event['body']).decode('utf-8'))
     input_file_url = event["url"]
     output_format = event["format"]
     
