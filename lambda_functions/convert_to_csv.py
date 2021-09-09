@@ -189,8 +189,35 @@ def lliberta_leasing_convert_handler(event, context):
 
     return({ 'statusCode': 200,
             'body': json.dumps(base64.b64decode(event['body']).decode('utf-8'))})
-                            
+
 def liberta_leasing_convert_handler(event, context):
+    '''
+    formatting of the lambda handler to be compatible with by AWS
+    '''
+    # information extracted from the event payload
+    input_file_url = event["url"]
+    output_format = event["format"]
+    
+    # download file locally and keep the filename
+    f_name = download_url(input_file_url)
+    
+    try:
+        # when no error :process and returns json
+        processed_dataframe = process_bank_statements(f_name, output_format)
+        return {'headers': {'Content-Type':'application/json'}, 
+                'statusCode': 200,
+                'body': json.dumps(processed_dataframe)}
+       
+    except Exception as e :
+        # in case of errors return a json with the error description
+        return {'headers': {'Content-Type':'application/json'}, 
+                'statusCode': 400,
+                'body': json.dumps(str(e))}
+                
+    #return process_bank_statements(f_name, output_format)
+
+
+def http_liberta_leasing_convert_handler(event, context):
     '''
     formatting of the lambda handler to be compatible with by AWS
     '''
