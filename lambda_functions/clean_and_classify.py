@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import os
 import shutil
 import sklearn
@@ -25,12 +24,13 @@ __email__ = "predicteev@gmail.com"
 __status__ = "Production"
 
 
-model = load( 'word2vec_1.joblib')
-classifier_model = load('classifier_1.joblib')
+
+model = load(download_url(url='https://assansanogos3.s3.eu-west-1.amazonaws.com/word2vec_1.joblib'))
+classifier_model = load(download_url(url='https://assansanogos3.s3.eu-west-1.amazonaws.com/classifier_1.joblib'))
 
 
 
-def download_url(url, extension="csv"):
+def download_url(url):
     '''
     utility funcction which downloads pdf to local environment
     '''
@@ -66,32 +66,40 @@ def clean_na_symbols(sentences):
     res = []
     for el in sentences :
         try:
+            # if number only
             if not math.isnan(float(el)):
                  res.append(el)
+                    
+            # replace nan values by empty space
             else:
                 res.append(" ")
+             # the exception clause is the clause for "normal sentences ( just with potential special characters)
         except Exception as e:
             sd = (" ").join([el.replace("_","").replace("(","").replace(")","") for el in el.split(" ") if len(el) >1])
             res.append(sd)
             
+    # limit sentences to 10 tokens MAX        
     res_sentences = [el.split(" ")[:10] + ['UNK'] * (10 - len(el.split(" "))) for el in res]
+    
     res_sen = [(" ").join(el) for el in res_sentences]
     
-    
+    # list of stop words/forbidden words
     forbidden_words = pd.read_csv("./forbidden_words_cs.txt", sep=',', names =["word"]).values
+    
+    # replace unauthorized words by UNK token
     tokenized_text_l = [[elt if elt not in forbidden_words else "UNK" for elt in el.split() ] for el in res_sen ]
-
+    
+    # clean tokens ( out of dictionary tokens)
     toks = clean_tokens(model, tokenized_text_l)
     
+    # embedding transformation
     df_vect = pd.DataFrame(np.array([np.array([model.wv[el] for el in tok]).mean(axis = 0) for tok in toks ]))
 
+    # class prediction
     preds = classifier_model.predict(df_vect)
     
     return preds
-
-
-
-    
+  
     
 def clean_bank_statements(file_name, out_format):
     df = pd.read_csv(file_name.replace("\"",""), sep=';')
@@ -101,8 +109,6 @@ def clean_bank_statements(file_name, out_format):
     df["preds"] = clean_na_symbols(sentences)
     return df.to_json( orient='records')
     
-
-
 
 def liberta_leasing_classify_handler(event, context):
     '''
