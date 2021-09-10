@@ -54,7 +54,7 @@ def process_descriptions(sentences):
     sentences_from = [re.sub("(\s\w{1}\s)","", str(el)) for el in sentences_from]
     sentences_from_no_underscore = [el.replace("_","") for el in sentences_from]
     sentences_from_no_underscore = [(" ").join([et.strip() for et in el.split() if len(et) >1]) for el in sentences_from_no_underscore if not len(el.strip()) <1]
-    return return sentences_from_no_underscore
+    return sentences_from_no_underscore
 
 
 def clean_tokens(model, tokenized_text_l):
@@ -106,9 +106,9 @@ def clean_bank_statements(file_name, out_format):
     df["filtered_description"] = df["Remarks_processed"].str.upper()
     sentences = list(df["filtered_description"].values)
     sentences = process_descriptions(sentences)
-    #df["preds"] = clean_na_symbols(sentences)
-    #return df.to_json( orient='records')
-    return str(sentences)
+    df["preds"] = clean_na_symbols(sentences)
+    return df.to_json( orient='records')
+    #return str(sentences)
     
 
 def liberta_leasing_classify_handler(event, context):
