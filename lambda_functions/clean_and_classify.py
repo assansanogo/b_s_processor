@@ -20,7 +20,7 @@ __maintainer__ = "Assan Sanogo"
 __email__ = "predicteev@gmail.com"
 __status__ = "Production"
 
-def download_url(url):
+def download_url(url, extension="csv):
     '''
     utility funcction which downloads pdf to local environment
     '''
@@ -28,7 +28,7 @@ def download_url(url):
     chunk_size=2000
     r = requests.get(url, stream=True)
     # the pdf filename is extracted from the presigned url
-    file_name = [el for el in url.split("/") if ".pdf" in el][0]
+    file_name = [el for el in url.split("/") if f".{extension}" in el][0]
     # open a file to dump the stream in
     with open(f'/tmp/{file_name}', 'wb') as fd:
         for chunk in r.iter_content(chunk_size):
