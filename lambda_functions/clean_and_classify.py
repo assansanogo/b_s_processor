@@ -106,8 +106,9 @@ def clean_bank_statements(file_name, out_format):
     df["filtered_description"] = df["Remarks_processed"].str.upper()
     sentences = list(df["filtered_description"].values)
     sentences = process_descriptions(sentences)
-    df["preds"] = clean_na_symbols(sentences)
-    return df.to_json( orient='records')
+    #df["preds"] = clean_na_symbols(sentences)
+    #return df.to_json( orient='records')
+    return str(sentences)
     
 
 def liberta_leasing_classify_handler(event, context):
