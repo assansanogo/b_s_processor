@@ -70,7 +70,7 @@ def liberta_leasing_classify_handler(event, context):
         
         return {'headers': {'Content-Type':'application/json'}, 
                 'statusCode': 200,
-                'body': json.dumps(f_name)}
+                'body': json.dumps(processed_dataframe_json)}
        
     except Exception as e :
         # in case of errors return a json with the error description
