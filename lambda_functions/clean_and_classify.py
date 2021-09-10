@@ -28,8 +28,10 @@ def download_url(url, extension="csv"):
     chunk_size=2000
     r = requests.get(url, stream=True)
     # the pdf filename is extracted from the presigned url
-    file_name = [el for el in url.split("/") if f".{extension}" in el][0]
+
+    file_name = url.split("/")[-1]
     # open a file to dump the stream in
+    
     with open(f'/tmp/{file_name}', 'wb') as fd:
         for chunk in r.iter_content(chunk_size):
             fd.write(chunk)
