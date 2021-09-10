@@ -35,6 +35,24 @@ def download_url(url, extension="csv"):
             fd.write(chunk)
     return f'/tmp/{file_name}'
 
+def process_descriptions(sentences):
+    sentences_from = [re.sub("([\w]+) ([f|F]rom)([\w\W\s]+)", r"\1 from \3", str(el)) for el in sentences]
+    sentences_from = [re.sub("([\w]+) ([f|F]rom)([\w\W]+)", r"\1 from \3", str(el)) for el in sentences_from]
+    sentences_from = [re.sub("([\w]+) ([v|V]ia)([\w\W\s]+)", r"\1 via \3", str(el)) for el in sentences_from]
+    sentences_from = [re.sub("(\s\w{1}\s)","", str(el)) for el in sentences_from]
+    sentences_from_no_underscore = [el.replace("_","") for el in sentences_from]
+    sentences_from_no_underscore = [(" ").join([et.strip() for et in el.split() if len(et) >1]) for el in sentences_from_no_underscore if not len(el.strip()) <1]
+    return sentences_from_no_underscore
+
+
+def clean_bank_statements(file_name, out_format):
+    df = pd.read_csv(file_name)
+    df["filtered_description"] = df["filtered_description"].str.upper()
+    return df.to_json()
+    
+
+
+
 def liberta_leasing_classify_handler(event, context):
     '''
     formatting of the lambda handler to be compatible with by AWS
@@ -48,7 +66,7 @@ def liberta_leasing_classify_handler(event, context):
     
     try:
         # when no error :process and returns json
-        processed_dataframe = process_bank_statements(f_name, output_format)
+        processed_dataframe_json = clean_bank_statements(f_name, output_format)
         
         return {'headers': {'Content-Type':'application/json'}, 
                 'statusCode': 200,
