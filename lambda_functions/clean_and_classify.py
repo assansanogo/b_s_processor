@@ -51,7 +51,7 @@ def clean_bank_statements(file_name, out_format):
     df = pd.read_csv(file_name, sep=';')
     #df["filtered_description"] = df["Remarks_processed"].str.upper()
     
-    return str(df.shape[0])
+    return file_name
     
 
 
