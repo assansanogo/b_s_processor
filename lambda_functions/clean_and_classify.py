@@ -10,6 +10,7 @@ import numpy as np
 import requests
 import json
 import base64
+import re
 
 __author__ = "Assan Sanogo"
 __copyright__ = "Copyright 2007, Liberta Leasing"
