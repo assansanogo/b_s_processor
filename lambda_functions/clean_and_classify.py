@@ -7,10 +7,13 @@ import sklearn
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
+import math
 import requests
 import json
 import base64
 import re
+import gensim.models
+from joblib import dump, load
 
 __author__ = "Assan Sanogo"
 __copyright__ = "Copyright 2007, Liberta Leasing"
@@ -20,6 +23,12 @@ __version__ = "0.1"
 __maintainer__ = "Assan Sanogo"
 __email__ = "predicteev@gmail.com"
 __status__ = "Production"
+
+
+model = load( 'word2vec_1.joblib')
+classifier_model = load('classifier_1.joblib')
+
+
 
 def download_url(url, extension="csv"):
     '''
@@ -45,14 +54,51 @@ def process_descriptions(sentences):
     sentences_from = [re.sub("(\s\w{1}\s)","", str(el)) for el in sentences_from]
     sentences_from_no_underscore = [el.replace("_","") for el in sentences_from]
     sentences_from_no_underscore = [(" ").join([et.strip() for et in el.split() if len(et) >1]) for el in sentences_from_no_underscore if not len(el.strip()) <1]
-    return sentences_from_no_underscore
+    return return sentences_from_no_underscore
 
 
+def clean_tokens(model, tokenized_text_l):
+    toks = [[k if k in model.wv.key_to_index.keys() else 'UNK' for k in tokenized_text] for tokenized_text in tokenized_text_l ]
+    return toks
+
+
+def clean_na_symbols(sentences):
+    res = []
+    for el in sentences :
+        try:
+            if not math.isnan(float(el)):
+                 res.append(el)
+            else:
+                res.append(" ")
+        except Exception as e:
+            sd = (" ").join([el.replace("_","").replace("(","").replace(")","") for el in el.split(" ") if len(el) >1])
+            res.append(sd)
+            
+    res_sentences = [el.split(" ")[:10] + ['UNK'] * (10 - len(el.split(" "))) for el in res]
+    res_sen = [(" ").join(el) for el in res_sentences]
+    
+    
+    forbidden_words = pd.read_csv("./forbidden_words_cs.txt", sep=',', names =["word"]).values
+    tokenized_text_l = [[elt if elt not in forbidden_words else "UNK" for elt in el.split() ] for el in res_sen ]
+
+    toks = clean_tokens(model, tokenized_text_l)
+    
+    df_vect = pd.DataFrame(np.array([np.array([model.wv[el] for el in tok]).mean(axis = 0) for tok in toks ]))
+
+    preds = classifier_model.predict(df_vect)
+    
+    return preds
+
+
+
+    
+    
 def clean_bank_statements(file_name, out_format):
     df = pd.read_csv(file_name.replace("\"",""), sep=';')
     df["filtered_description"] = df["Remarks_processed"].str.upper()
     sentences = list(df["filtered_description"].values)
-    df["sentences"]= process_descriptions(sentences)
+    sentences = process_descriptions(sentences)
+    df["preds"] = clean_na_symbols(sentences)
     return df.to_json( orient='records')
     
 
