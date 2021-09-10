@@ -20,7 +20,7 @@ __maintainer__ = "Assan Sanogo"
 __email__ = "predicteev@gmail.com"
 __status__ = "Production"
 
-def download_url(url, extension="csv):
+def download_url(url, extension="csv"):
     '''
     utility funcction which downloads pdf to local environment
     '''
