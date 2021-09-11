@@ -250,7 +250,7 @@ def loan_analysis(amount, n_months, data_path):
         monthly_allowed_amount_to_borrow = pd.DataFrame([0], columns=["monthly_allowed"]).mean()
         borrow_as_is = False
         tenure = pd.DataFrame([0], columns=["monthly_allowed"])
-    return tenure, monthly_allowed_amount_to_borrow, amount,n_months, borrow_as_is, original_ratio_to_borrow
+    return tenure, monthly_allowed_amount_to_borrow, amount,n_months,salary_bracket, borrow_as_is, original_ratio_to_borrow
 
 
 
@@ -301,16 +301,16 @@ def liberta_leasing_analyze_handler(event, context):
     n_months = event["n_months"]
     url = event["url"]
 
-    LL_tenure, LL_monthly_allowed_amount_to_borrow, LL_amount, LL_n_month, LL_borrow_as_is, LL_original_ratio_to_borrow = loan_analysis(amount, n_months, url)
+    LL_tenure, LL_monthly_allowed_amount_to_borrow, LL_amount, LL_n_months, LL_salary_bracket, LL_borrow_as_is, LL_original_ratio_to_borrow = loan_analysis(amount, n_months, url)
     return {'statusCode' : 200,
            'body': json.dumps({
                    "tenure": json.dumps(LL_tenure),
                    "monthly_allowed_amount_to_borrow": json.dumps(LL_monthly_allowed_amount_to_borrow),
                    "amount_requested": json.dumps(LL_amount),
-                   "tenure_requested": json.dumps(LL_n_month),
+                   "tenure_requested": json.dumps(LL_n_months),
                    "loan_request": json.dumps(LL_borrow_as_is),
                    "original_loan_ratio_salary": json.dumps(LL_original_ratio_to_borrow),
-                   "salary_bracket": json.dumps(salary_bracket),
-                   "authorized_ratio": json.dumps(DTI[salary_bracket])
+                   "salary_bracket": json.dumps(LL_salary_bracket),
+                   "authorized_ratio": json.dumps(DTI[LL_salary_bracket])
                    })
            }
