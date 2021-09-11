@@ -88,9 +88,8 @@ def clean_na_symbols(sentences):
     tokenized_text_l = [[elt if elt not in forbidden_words else "UNK" for elt in el.split() ] for el in res_sen ]
     
     # clean tokens ( out of dictionary tokens)
-    toks = clean_tokens(model, tokenized_text_l)
-    
     model = load(download_url(url='https://assansanogos3.s3.eu-west-1.amazonaws.com/word2vec_1.joblib'))
+    toks = clean_tokens(model, tokenized_text_l)
     
     classifier_model = load(download_url(url='https://assansanogos3.s3.eu-west-1.amazonaws.com/classifier_1.joblib'))
     
