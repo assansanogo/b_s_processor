@@ -249,7 +249,7 @@ def loan_analysis(amount, n_months, data_path):
         monthly_allowed_amount_to_borrow = pd.DataFrame([0], columns=["monthly_allowed"]).mean()
         borrow_as_is = False
         tenure = pd.DataFrame([0], columns=["monthly_allowed"])
-    return tenure, monthly_allowed_amount_to_borrow, amount,n_month, borrow_as_is, original_ratio_to_borrow
+    return tenure, monthly_allowed_amount_to_borrow, amount,n_months, borrow_as_is, original_ratio_to_borrow
 
 
 
