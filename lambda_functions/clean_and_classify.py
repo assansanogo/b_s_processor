@@ -25,8 +25,6 @@ __status__ = "Production"
 
 
 
-model = load(download_url(url='https://assansanogos3.s3.eu-west-1.amazonaws.com/word2vec_1.joblib'))
-classifier_model = load(download_url(url='https://assansanogos3.s3.eu-west-1.amazonaws.com/classifier_1.joblib'))
 
 
 
@@ -91,6 +89,10 @@ def clean_na_symbols(sentences):
     
     # clean tokens ( out of dictionary tokens)
     toks = clean_tokens(model, tokenized_text_l)
+    
+    model = load(download_url(url='https://assansanogos3.s3.eu-west-1.amazonaws.com/word2vec_1.joblib'))
+    
+    classifier_model = load(download_url(url='https://assansanogos3.s3.eu-west-1.amazonaws.com/classifier_1.joblib'))
     
     # embedding transformation
     df_vect = pd.DataFrame(np.array([np.array([model.wv[el] for el in tok]).mean(axis = 0) for tok in toks ]))
