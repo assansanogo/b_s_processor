@@ -248,7 +248,9 @@ def loan_analysis(amount, n_months, data_path):
         monthly_allowed_amount_to_borrow = pd.DataFrame([0], columns=["monthly_allowed"]).mean()
         borrow_as_is = False
         tenure = pd.DataFrame([0], columns=["monthly_allowed"])
-    return tenure, monthly_allowed_amount_to_borrow, amount, borrow_as_is, original_ratio_to_borrow
+    return tenure, monthly_allowed_amount_to_borrow, amount,n_month, borrow_as_is, original_ratio_to_borrow
+
+
 
 
 def full_analysis(data_path):
@@ -279,9 +281,6 @@ def full_analysis(data_path):
     var_salary = result_salary["paid_day_variance"]
     no_access_to_debt = result_no_access_to_debt
 
-
-
-
     return(result_loan["n_loans_summary"], 
             result_loan["loan_summary"],
             result_salary["number_of_payments"],
@@ -294,3 +293,22 @@ def full_analysis(data_path):
             result_loan_to_summary,
             salary_bracket)
 
+
+def analyze_handler(event, context):
+    amount = event["amount"]
+    n_months = event["n_months"]
+    url = event["url"]
+
+    LL_tenure, LL_monthly_allowed_amount_to_borrow, LL_amount, LL_n_month, LL_borrow_as_is, LL_original_ratio_to_borrow = loan_analysis(amount, n_months, url)
+    return {'statusCode' : 200,
+           'body': json.dumps({
+                   "tenure":LL_tenure.to_json(),
+                   "monthly_allowed_amount_to_borrow": json.dumps(LL_monthly_allowed_amount_to_borrow),
+                   "amount_requested":json.dumps(LL_amount),
+                   "tenure_requested":json.dumps(LL_n_month),
+                   "loan_request":json.dumps(LL_borrow_as_is),
+                   "original_loan_ratio_salary": json.dumps(LL_original_ratio_to_borrow),
+                   "salary_bracket": json.dumps(salary_bracket),
+                   "authorized_ratio":json.dumps(DTI[salary_bracket])
+                   })
+           }
