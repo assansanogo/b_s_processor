@@ -221,7 +221,7 @@ def loan_analysis(amount, n_months, data_path):
     '''
     function which returns the amount borrowable per month
     '''
-    df = pd.read_csv(data_path, sep=',')
+    df = pd.read_csv(data_path, sep=';')
     df["CLASSE"] = df["preds"]
     df_loan = df[df["CLASSE"]=='loan']
     df_transfer = df[df["CLASSE"]=='transfer']
