@@ -294,7 +294,7 @@ def full_analysis(data_path):
             salary_bracket)
 
 
-def analyze_handler(event, context):
+def liberta_leasing_analyze_handler(event, context):
     amount = event["amount"]
     n_months = event["n_months"]
     url = event["url"]
