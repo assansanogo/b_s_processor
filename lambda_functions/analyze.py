@@ -304,13 +304,13 @@ def liberta_leasing_analyze_handler(event, context):
     LL_tenure, LL_monthly_allowed_amount_to_borrow, LL_amount, LL_n_month, LL_borrow_as_is, LL_original_ratio_to_borrow = loan_analysis(amount, n_months, url)
     return {'statusCode' : 200,
            'body': json.dumps({
-                   "tenure":LL_tenure.to_json(),
+                   "tenure": json.dumps(LL_tenure),
                    "monthly_allowed_amount_to_borrow": json.dumps(LL_monthly_allowed_amount_to_borrow),
-                   "amount_requested":json.dumps(LL_amount),
-                   "tenure_requested":json.dumps(LL_n_month),
-                   "loan_request":json.dumps(LL_borrow_as_is),
+                   "amount_requested": json.dumps(LL_amount),
+                   "tenure_requested": json.dumps(LL_n_month),
+                   "loan_request": json.dumps(LL_borrow_as_is),
                    "original_loan_ratio_salary": json.dumps(LL_original_ratio_to_borrow),
                    "salary_bracket": json.dumps(salary_bracket),
-                   "authorized_ratio":json.dumps(DTI[salary_bracket])
+                   "authorized_ratio": json.dumps(DTI[salary_bracket])
                    })
            }
