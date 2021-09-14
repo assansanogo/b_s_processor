@@ -143,9 +143,17 @@ def liberta_leasing_classify_handler(event, context):
         # when no error :process and returns json
         processed_dataframe_json, decision_json = clean_bank_statements(f_name, output_format)
         
-        return {'headers': {'Content-Type':'application/json'}, 
-                'statusCode': 200,
-                'body': {'classified':json.dumps(processed_dataframe_json), 'decision':json.dumps(decision_json)}
+        return {
+              "headers": {
+                     "Content-Type": "application/json"
+              },
+              "statusCode": 200,
+              "body": {
+                     "classified": json.dumps(processed_dataframe_json),
+                     "decision": json.dumps(decision_json)
+              }
+       }
+
        
     except Exception as e :
         # in case of errors return a json with the error description
