@@ -105,7 +105,7 @@ def clean_na_symbols(sentences):
     
 def clean_bank_statements(file_name, out_format):
     dtf = pd.read_csv(file_name.replace("\"",""), sep=';')
-    dtf["filtered_description"] = df["Remarks_processed"].str.upper()
+    dtf["filtered_description"] = dtf["Remarks_processed"].str.upper()
     sentences = list(dtf["filtered_description"].values)
     sentences = process_descriptions(sentences)
     dtf["preds"] = clean_na_symbols(sentences)
