@@ -25,7 +25,8 @@ __status__ = "Production"
 
 
 
-
+CATEGORIES = ['bank_charges', 'cash', 'commission', 'loan', 'maintenance',
+       'reversal', 'salary', 'tax', 'transfert', 'utility']
 
 
 def download_url(url):
@@ -103,12 +104,27 @@ def clean_na_symbols(sentences):
   
     
 def clean_bank_statements(file_name, out_format):
-    df = pd.read_csv(file_name.replace("\"",""), sep=';')
-    df["filtered_description"] = df["Remarks_processed"].str.upper()
-    sentences = list(df["filtered_description"].values)
+    dtf = pd.read_csv(file_name.replace("\"",""), sep=';')
+    dtf["filtered_description"] = df["Remarks_processed"].str.upper()
+    sentences = list(dtf["filtered_description"].values)
     sentences = process_descriptions(sentences)
-    df["preds"] = clean_na_symbols(sentences)
-    return df.to_json( orient='records')
+    dtf["preds"] = clean_na_symbols(sentences)
+
+    df = dtf.copy()
+    
+    df["Debits"] = df["Debits"].str.replace(",","").astype('float').fillna(0)
+    df["Credits"] = df["Credits"].str.replace(",","").astype('float').fillna(0)
+    for c in CATEGORIES:
+        df[f'category_{str(c)}'] = (df["preds"] == c).astype('float') * (-1*df["Debits"] + df["Credits"])
+    df = df.iloc[:-1]
+    df.index = pd.to_datetime(df["Trans. Date"])
+    l_columns = [f'category_{str(c)}' for c in CATEGORIES]
+
+    summary_decision = df[l_columns].groupby(pd.Grouper(level="Trans. Date",freq='M')).sum()
+    summations = pd.DataFrame(summary_decision.sum()).transpose()
+    summations.index = ["Total"]
+    decision_df = pd.concat([summary_decision, summations], axis=0)
+    return (dtf.to_json( orient='records'), decision_df.to_json( orient='records'))
     #return str(sentences)
     
 
@@ -125,11 +141,11 @@ def liberta_leasing_classify_handler(event, context):
     
     try:
         # when no error :process and returns json
-        processed_dataframe_json = clean_bank_statements(f_name, output_format)
+        processed_dataframe_json, decision_json = clean_bank_statements(f_name, output_format)
         
         return {'headers': {'Content-Type':'application/json'}, 
                 'statusCode': 200,
-                'body': json.dumps(processed_dataframe_json)}
+                'body': {'classified':json.dumps(processed_dataframe_json), 'decision':json.dumps(decision_json)}
        
     except Exception as e :
         # in case of errors return a json with the error description
