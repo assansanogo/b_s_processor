@@ -3,7 +3,6 @@ from pathlib import Path
 import shutil
 import glob2
 import random
-import darknet
 import time
 import cv2
 import numpy as np
