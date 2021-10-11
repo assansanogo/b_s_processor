@@ -4,6 +4,8 @@ from pdf2image import convert_from_path, convert_from_bytes
 import zipfile
 import os
 import glob2
+import requests
+import json
 
 
 def download_url(url):
@@ -42,12 +44,29 @@ def parse(my_pdf):
     with ZipFile('my_bank_statement_png.zip','w') as zip:
         # writing each file one by one for file in png paths:
         zip.write(png_path)
-    print(os.path. getsize('my_bank_statement_png.zip'))
+    print(os.path.getsize('my_bank_statement_png.zip'))
+    return 'my_bank_statement_png.zip'
           
           
 def convert_from_pdf_2_csv_handler(event, context):
     input_file_url = event["url"]
     output_format = event["format"]
     f_path = download_url(input_file_url)
-    parse(f_path)
+    
+    dest_file = parse(f_path)
+    
+    try:
+        # when no error :process and returns json
+        processed_dataframe = detect_LL(f_name)
+        return {'headers': {'Content-Type':'application/json'}, 
+        'statusCode': 200,
+        'body': json.dumps(dest_file)}
+
+    except Exception as e :
+        # in case of errors return a json with the error description
+        return {'headers': {'Content-Type':'application/json'}, 
+        'statusCode': 400,
+        'body': json.dumps(str(e))}
+    
+    
  
