@@ -37,13 +37,12 @@ def parse(my_pdf):
         png_path = new_path.replace("pdf","png")
         img_test = convert_from_path(new_path)[0].save(png_path)
         
-        os.chdir(new_dir)
-      
-      all_png = glob2.glob(f"{new_dir}/*.png")
-      with ZipFile('my_bank_statement_png.zip','w') as zip:
-          # writing each file one by one for file in png paths:
-          zip.write(png_path)
-      print(os.path. getsize('my_bank_statement_png.zip')
+        os.chdir(new_dir)    
+    all_png = glob2.glob(f"{new_dir}/*.png")
+    with ZipFile('my_bank_statement_png.zip','w') as zip:
+        # writing each file one by one for file in png paths:
+        zip.write(png_path)
+    print(os.path. getsize('my_bank_statement_png.zip')
           
           
 def convert_from_pdf_2_csv_handler(event, context):
