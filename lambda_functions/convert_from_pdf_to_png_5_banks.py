@@ -1,7 +1,7 @@
 import PyPDF2
 import tqdm
 from pdf2image import convert_from_path, convert_from_bytes
-import zipfile
+from zipfile import ZipFile
 import os
 import glob2
 import requests
