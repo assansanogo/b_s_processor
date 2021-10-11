@@ -43,6 +43,7 @@ def download_url(url):
         for file_zip in zip.namelist():
             zip.extract(file_zip,f'/tmp/all_png')
         print('Extracting all the files now...')
+     return '/tmp/all_png'
 
 def get_rows_columns_map(table_result, blocks_map):
     rows = {}
