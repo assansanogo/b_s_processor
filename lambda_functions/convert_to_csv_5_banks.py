@@ -248,9 +248,9 @@ def liberta_leasing_convert_handler(event, context):
     
     
     # download file locally and extract a zip
-    download_url(zip_url)
+    f_path = download_url(zip_url)
 
-    output_file = process_csv("/tmp/all_csv")
+    output_file = process_csv(f_path)
     
     
     try:
