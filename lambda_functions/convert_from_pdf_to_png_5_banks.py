@@ -53,11 +53,11 @@ def convert_from_pdf_2_csv_handler(event, context):
     output_format = event["format"]
     f_path = download_url(input_file_url)
     
-    dest_file = parse(f_path)
+    
     
     try:
         # when no error :process and returns json
-        processed_dataframe = detect_LL(f_name)
+        dest_file = parse(f_path)
         return {'headers': {'Content-Type':'application/json'}, 
         'statusCode': 200,
         'body': json.dumps(dest_file)}
