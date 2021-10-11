@@ -140,7 +140,7 @@ def png_2_csv(file_name):
             
 def parse(f_path):
     all_files = glob2.glob(os.path.join(f_path, "*/*.png"))
-    for file_ in tqdm(all_files):
+    for file_name in tqdm(all_files):
         png_2_csv(file_name)
         
     return glob2.glob(os.path.join(f_path, "*/*.csv"))
