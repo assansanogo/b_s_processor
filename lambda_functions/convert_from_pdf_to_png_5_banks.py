@@ -42,7 +42,7 @@ def parse(my_pdf):
     with ZipFile('my_bank_statement_png.zip','w') as zip:
         # writing each file one by one for file in png paths:
         zip.write(png_path)
-    print(os.path. getsize('my_bank_statement_png.zip')
+    print(os.path. getsize('my_bank_statement_png.zip'))
           
           
 def convert_from_pdf_2_csv_handler(event, context):
