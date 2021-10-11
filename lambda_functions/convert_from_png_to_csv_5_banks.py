@@ -11,6 +11,7 @@ import glob2
 import requests
 import base64
 from zipfile import ZipFile
+from tqdm import tqdm
 
 
 def download_url(url):
