@@ -35,23 +35,29 @@ def download_url(url):
         for chunk in r.iter_content(chunk_size):
             fd.write(chunk)
     print(os.stat(f'/tmp/{file_name}').st_size)
-    
 
     return f'/tmp/{file_name}'
   
-  
+    
+  def import_model(model_path):
+    model_Doc2vec = gensim.models.Doc2Vec.load(model_path)
+    return model_Doc2vec
+
+
   # problem with pngs
   
   def classify_liberta_leasing_convert_handler(event, context):
   
     input_file_url = event["url"]
     output_format = event["format"]
+    model_path = event["model_path"]
     f_path = download_url(input_file_url)
+    model_NLP = import_model(model_path) 
 
     try:
         # when no error :process and returns json
 
-        dest_file = parse(f_path)
+        dest_file = f_path
         return {'headers': {'Content-Type':'application/json'}, 
         'statusCode': 200,
         'body': json.dumps(str(dest_file))}
