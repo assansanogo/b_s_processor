@@ -250,12 +250,13 @@ def liberta_leasing_convert_handler(event, context):
     # download file locally and extract a zip
     f_path = download_url(zip_url)
 
-    output_file = process_csv(f_path)
+    
     
     
     try:
         # when no error :process and returns json
-        processed_dataframe = process_bank_statements(f_name, bank_format)
+        #processed_dataframe = process_bank_statements(f_name, bank_format)
+        output_file = process_csv(f_path, bank_format)
         return {'headers': {'Content-Type':'application/json'}, 
                 'statusCode': 200,
                 'body': json.dumps(output_file.to_string())}
