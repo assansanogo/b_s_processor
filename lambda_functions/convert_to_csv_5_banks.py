@@ -40,9 +40,9 @@ def download_url(url):
         os.chdir('/tmp/all_csv')
         zip.extractall()
         
-    print(glob2.glob('/tmp/all_csv/*'))
+    print(glob2.glob('/tmp/all_csv/{file_name}/*'))
         
-    return f'/tmp/{file_name}'
+    return f'/tmp/all_csv/{file_name}'
 
 
 def guess_header(all_csv):
