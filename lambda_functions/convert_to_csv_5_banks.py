@@ -1,6 +1,39 @@
 import pandas as pd
 from pathlib import Path
 import shutil
+import glob2
+import random
+import darknet
+import time
+import cv2
+import numpy as np
+import requests
+import json
+import base64
+from zipfile import ZipFile
+
+
+def download_url(url):
+    '''
+    utility funcction which downloads pdf to local environment
+    '''
+    # data is going to be read as stream
+    chunk_size=2000
+    r = requests.get(url, stream=True)
+    # the pdf filename is extracted from the presigned url
+    file_name = [el for el in url.split("/") if (".zip" in el)][0]
+    # open a file to dump the stream in
+    with open(f'/tmp/{file_name}', 'wb') as fd:
+        for chunk in r.iter_content(chunk_size):
+            fd.write(chunk)
+    
+    with ZipFile(f'/tmp/{file_name}', 'r') as zip:
+        # extracting all the files
+        print('Extracting all the files now...')
+        zip.extractall(f'/tmp/all_csv')
+        
+    return f'/tmp/{file_name}'
+
 
 def guess_header(all_csv):
     
@@ -184,3 +217,30 @@ def process_csv(input_folder, bank_name=None):
         concatenated.to_excel(file_dest)
     
     return concatenated
+
+def liberta_leasing_convert_handler(event, context):
+    '''
+    formatting of the lambda handler to be compatible with by AWS
+    '''
+    # information extracted from the event payload
+    zip_url = event["url"]
+    bank_format = event["format"]
+    
+    
+    # download file locally and extract a zip
+    download_url(zip_url)
+    output_file = process_csv("/tmp/all_csv")
+    
+    try:
+        # when no error :process and returns json
+        processed_dataframe = process_bank_statements(f_name, bank_format)
+        return {'headers': {'Content-Type':'application/json'}, 
+                'statusCode': 200,
+                'body': json.dumps(output_file.to_string()}
+       
+    except Exception as e :
+        # in case of errors return a json with the error description
+        return {'headers': {'Content-Type':'application/json'}, 
+                'statusCode': 400,
+                'body': json.dumps(str(e))}
+                
