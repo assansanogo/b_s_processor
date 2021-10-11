@@ -38,16 +38,16 @@ def download_url(url):
 
     return f'/tmp/{file_name}'
   
-    
-  def import_model(model_path):
+
+def import_model(model_path):
     model_Doc2vec = gensim.models.Doc2Vec.load(model_path)
     return model_Doc2vec
 
 
   # problem with pngs
   
-  def classify_liberta_leasing_convert_handler(event, context):
-  
+def classify_liberta_leasing_convert_handler(event, context):
+
     input_file_url = event["url"]
     output_format = event["format"]
     model_path = event["model_path"]
@@ -56,14 +56,13 @@ def download_url(url):
 
     try:
         # when no error :process and returns json
-
         dest_file = f_path
         return {'headers': {'Content-Type':'application/json'}, 
-        'statusCode': 200,
-        'body': json.dumps(str(dest_file))}
+                'statusCode': 200,
+                'body': json.dumps(str(dest_file))}
 
     except Exception as e :
         # in case of errors return a json with the error description
         return {'headers': {'Content-Type':'application/json'}, 
-        'statusCode': 400,
-        'body': json.dumps(str(e))}
+                'statusCode': 400,
+                'body': json.dumps(str(e))}
