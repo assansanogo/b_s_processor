@@ -142,7 +142,7 @@ def png_2_csv(file_name):
         s3_client = boto3.client('s3')
         
         try:
-            object_name = new_file_name.split("/")[-1]
+            object_name = "job/"+new_file_name.split("/")[-1]
             bucket = "liberta-leasing-ml"
             response = s3_client.upload_file(new_file_name, bucket, object_name)
             result = object_name
