@@ -10,6 +10,7 @@ import requests
 import json
 import base64
 from zipfile import ZipFile
+import os
 
 
 def download_url(url):
@@ -29,7 +30,8 @@ def download_url(url):
     with ZipFile(f'/tmp/{file_name}', 'r') as zip:
         # extracting all the files
         print('Extracting all the files now...')
-        zip.extractall(f'/tmp/all_csv')
+        os.chdir('/tmp/all_csv')
+        zip.extractall()
         
     return f'/tmp/{file_name}'
 
@@ -228,7 +230,9 @@ def liberta_leasing_convert_handler(event, context):
     
     # download file locally and extract a zip
     download_url(zip_url)
+    print(glob2.glob("/tmp/all_csv/*.csv"))
     output_file = process_csv("/tmp/all_csv")
+    
     
     try:
         # when no error :process and returns json
