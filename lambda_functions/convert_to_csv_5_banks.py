@@ -39,8 +39,7 @@ def download_url(url):
         os.makedirs('/tmp/all_csv', exist_ok=True)
         os.chdir('/tmp/all_csv')
         zip.extractall()
-        
-     print(os.listdir('/tmp/all_csv'))
+    print(os.listdir('/tmp/all_csv'))
         
     return f'/tmp/{file_name}'
 
