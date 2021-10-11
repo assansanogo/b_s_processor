@@ -25,7 +25,7 @@ def download_url(url):
     os.makedirs('/tmp', exist_ok=True)
     # open a file to dump the stream in
     print(r)
-    print(filename)
+    print(file_name)
     with open(f'/tmp/{file_name}', 'wb') as fd:
         
         for chunk in r.iter_content(chunk_size):
