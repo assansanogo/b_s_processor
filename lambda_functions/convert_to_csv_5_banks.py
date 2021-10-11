@@ -49,9 +49,10 @@ def download_url(url):
     print(os.getcwd())
     print(glob2.glob(os.getcwd()+'/*'))
     print(glob2.glob('/tmp/all_csv/*'))
-    print(glob2.glob('/tmp/all_csv/{file_name}/*'))
+    file_path = file_name.replace(".zip","")
+    print(glob2.glob(f'/tmp/all_csv/{file_path}/*'))
         
-    return f'/tmp/all_csv/{file_name}'
+    return f'/tmp/all_csv/{file_path}'
 
 
 def guess_header(all_csv):
