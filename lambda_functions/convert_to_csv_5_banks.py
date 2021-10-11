@@ -33,13 +33,14 @@ def download_url(url):
             fd.write(chunk)
     print(os.stat(f'/tmp/{file_name}').st_size)
     
-    with ZipFile(f'/tmp/{file_name}', 'r') as zip:
+    with ZipFile(f'/tmp/{file_name}') as zip:
         # extracting all the files
         print('Extracting all the files now...')
         os.makedirs('/tmp/all_csv', exist_ok=True)
         os.chdir('/tmp/all_csv')
         zip.extractall()
-    print(os.listdir('/tmp/all_csv'))
+        
+    print(glob2.glob('/tmp/all_csv/*'))
         
     return f'/tmp/{file_name}'
 
