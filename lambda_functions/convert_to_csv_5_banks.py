@@ -40,7 +40,7 @@ def download_url(url):
         os.chdir('/tmp/all_csv')
         
         for file_zip in zip.namelist():
-            zip.extract(file_zip,f'/tmp/all_csv/{file_name}')
+            zip.extract(file_zip,f'/tmp/all_csv')
         print('Extracting all the files now...')
         
         
