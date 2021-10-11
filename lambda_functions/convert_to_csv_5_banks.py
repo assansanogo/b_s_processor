@@ -24,6 +24,8 @@ def download_url(url):
     file_name = [el for el in url.split("/") if (".zip" in el)][0]
     os.makedirs('/tmp', exist_ok=True)
     # open a file to dump the stream in
+    print(r)
+    print(filename)
     with open(f'/tmp/{file_name}', 'wb') as fd:
         
         for chunk in r.iter_content(chunk_size):
