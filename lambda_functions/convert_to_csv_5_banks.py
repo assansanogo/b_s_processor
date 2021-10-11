@@ -26,10 +26,13 @@ def download_url(url):
     # open a file to dump the stream in
     print(r)
     print(file_name)
+    
     with open(f'/tmp/{file_name}', 'wb') as fd:
         
         for chunk in r.iter_content(chunk_size):
             fd.write(chunk)
+    
+    print(os.stat(f'/tmp/{file_name}').st_size)
     
     with ZipFile(f'/tmp/{file_name}', 'r') as zip:
         # extracting all the files
@@ -37,6 +40,8 @@ def download_url(url):
         os.makedirs('/tmp/all_csv', exist_ok=True)
         os.chdir('/tmp/all_csv')
         zip.extractall()
+        
+     print(os.listdir('/tmp/all_csv'))
         
     return f'/tmp/{file_name}'
 
