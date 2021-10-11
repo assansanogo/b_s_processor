@@ -1,4 +1,3 @@
-#Download base image ubuntu 16.04
 FROM amazon/aws-lambda-python:3.9
 WORKDIR /home/ubuntu
 RUN yum update && yum install make curl wget sudo git gcc-c++ libgl1 libgl1-mesa-glx mesa-libGL ffmpeg libsm6 libxext6 -y
