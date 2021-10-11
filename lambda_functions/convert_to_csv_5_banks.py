@@ -31,7 +31,6 @@ def download_url(url):
         
         for chunk in r.iter_content(chunk_size):
             fd.write(chunk)
-    
     print(os.stat(f'/tmp/{file_name}').st_size)
     
     with ZipFile(f'/tmp/{file_name}', 'r') as zip:
