@@ -139,11 +139,11 @@ def png_2_csv(file_name):
             fout.write(table_csv)
             
 def parse(f_path):
-    all_files = glob2.glob(os.path.join(f_path,"*.png"))
+    all_files = glob2.glob(os.path.join(f_path, "*/*.png"))
     for file_ in tqdm(all_files):
         png_2_csv(file_name)
         
-    return glob2.glob(os.path.join(f_path,"*.csv"))
+    return glob2.glob(os.path.join(f_path, "*/*.csv"))
 
 def png2csv_liberta_leasing_convert_handler(event, context):
   
