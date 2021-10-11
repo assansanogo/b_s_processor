@@ -36,11 +36,15 @@ def download_url(url):
     with ZipFile(f'/tmp/{file_name}', 'r') as zip:
         # extracting all the files
         print(zip.namelist())
-        print('Extracting all the files now...')
-        os.makedirs('/tmp/all_csv', exist_ok=True)
+        os.makedirs(f'/tmp/all_csv/{file_name}', exist_ok=True)
         os.chdir('/tmp/all_csv')
         
-        zip.extractall()
+        for file_zip in zip.namelist():
+            zip.extract(file_zip,f'/tmp/all_csv/{file_name}')
+        print('Extracting all the files now...')
+        
+        
+        
         
     print(os.getcwd())
     print(glob2.glob(os.getcwd()+'/*'))
