@@ -134,9 +134,11 @@ def png_2_csv(file_name):
             fout.write(table_csv)
             
 def parse(f_path):
-    all_files = glob2.glob(os.path.join(f_path,".png"))
-    for file_ in  all_files:
+    all_files = glob2.glob(os.path.join(f_path,"*.png"))
+    for file_ in tqdm(all_files):
         png_2_csv(file_name)
+        
+    return glob2.glob(os.path.join(f_path,"*.csv"))
 
 def png2csv_liberta_leasing_convert_handler(event, context):
   
@@ -150,7 +152,7 @@ def png2csv_liberta_leasing_convert_handler(event, context):
         dest_file = parse(f_path)
         return {'headers': {'Content-Type':'application/json'}, 
         'statusCode': 200,
-        'body': json.dumps(dest_file)}
+        'body': json.dumps(str(dest_file))}
 
     except Exception as e :
         # in case of errors return a json with the error description
