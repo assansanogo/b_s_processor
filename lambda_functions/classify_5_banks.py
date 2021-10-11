@@ -57,9 +57,11 @@ def classify_liberta_leasing_convert_handler(event, context):
     try:
         # when no error :process and returns json
         dest_file = f_path
+        dataframe_file = pd.read_excel(dest_file)
+        dataframe_file["Narration_Vectorized"] = dataframe_file["Narration"].apply(lambda x: model_doc2vec.infer_vector(x.split(" "))
         return {'headers': {'Content-Type':'application/json'}, 
                 'statusCode': 200,
-                'body': json.dumps(str(dest_file))}
+                'body': json.dumps(str(dataframe_file))}
 
     except Exception as e :
         # in case of errors return a json with the error description
