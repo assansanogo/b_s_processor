@@ -29,7 +29,7 @@ def parse(my_pdf):
         my_page = reader.getPage(i)
         writer.addPage(my_page)
         output_filename = my_pdf.replace('.pdf', f'_{str(i)}.pdf')
-        new_dir = '/tmp
+        new_dir = '/tmp'
         os.makedirs(new_dir, exist_ok=True)
         new_path = os.path.join(new_dir, output_filename)
         with open(new_path, 'wb') as output:
