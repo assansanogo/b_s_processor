@@ -38,8 +38,9 @@ def download_url(url):
         print('Extracting all the files now...')
         os.makedirs('/tmp/all_csv', exist_ok=True)
         os.chdir('/tmp/all_csv')
-        zip.extractall()
-        
+        zip.extractall('/tmp/all_csv')
+    
+    print(glob2.glob('/tmp/all_csv/*'))
     print(glob2.glob('/tmp/all_csv/{file_name}/*'))
         
     return f'/tmp/all_csv/{file_name}'
@@ -239,7 +240,7 @@ def liberta_leasing_convert_handler(event, context):
     
     # download file locally and extract a zip
     download_url(zip_url)
-    print(glob2.glob("/tmp/all_csv/*.csv"))
+
     output_file = process_csv("/tmp/all_csv")
     
     
