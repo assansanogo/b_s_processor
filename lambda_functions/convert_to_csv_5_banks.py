@@ -22,14 +22,17 @@ def download_url(url):
     r = requests.get(url, stream=True)
     # the pdf filename is extracted from the presigned url
     file_name = [el for el in url.split("/") if (".zip" in el)][0]
+    os.makedirs('/tmp', exist_ok=True)
     # open a file to dump the stream in
     with open(f'/tmp/{file_name}', 'wb') as fd:
+        
         for chunk in r.iter_content(chunk_size):
             fd.write(chunk)
     
     with ZipFile(f'/tmp/{file_name}', 'r') as zip:
         # extracting all the files
         print('Extracting all the files now...')
+        os.makedirs('/tmp/all_csv', exist_ok=True)
         os.chdir('/tmp/all_csv')
         zip.extractall()
         
