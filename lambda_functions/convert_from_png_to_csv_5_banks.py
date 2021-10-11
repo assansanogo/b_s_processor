@@ -10,6 +10,7 @@ from pprint import pprint
 import glob2
 import requests
 import base64
+from zipfile import ZipFile
 
 
 def download_url(url):
