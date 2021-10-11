@@ -44,7 +44,9 @@ def download_url(url):
         for file_zip in zip.namelist():
             zip.extract(file_zip, '/tmp/all_png')
             print('Extracting all the files now...')
-        print(glob2.glob('/tmp/all_png/*/*.png')
+        print("double nested :\n")
+        print(glob2.glob('/tmp/all_png/*/*.png'))
+        
     return '/tmp/all_png'
 
 def get_rows_columns_map(table_result, blocks_map):
