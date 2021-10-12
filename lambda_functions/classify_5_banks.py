@@ -13,6 +13,7 @@ import base64
 from zipfile import ZipFile
 from tqdm import tqdm
 import gensim
+import joblib
 
 
 def download_url(url):
@@ -50,15 +51,25 @@ def classify_liberta_leasing_convert_handler(event, context):
 
     input_file_url = event["url"]
     output_format = event["format"]
-    model_path = event["model_path"]
+    model_Doc2Vec_path = event["model_Doc2Vec_path"]
+    model_NLP_path = event["model_NLP_path"]
+    
+    model_Doc2Vec = import_model(model_Doc2Vec_path) 
+    local_model_NLP_path = download_url(model_NLP_path)
+    
+    model_NLP = joblib.load(local_model_NLP_path)
     f_path = download_url(input_file_url)
-    model_NLP = import_model(model_path) 
+    
 
     try:
         # when no error :process and returns json
         dest_file = f_path
         dataframe_file = pd.read_excel(dest_file)
+        
         dataframe_file["Narration_Vectorized"] = dataframe_file["Narration"].apply(lambda x: model_doc2vec.infer_vector(x.split(" ")))
+        dataframe_file["CLASSE"] = dataframe_file["Narration_Vectorized"].apply(lambda x : clf.predict(x))
+        
+        
         return {'headers': {'Content-Type':'application/json'}, 
                 'statusCode': 200,
                 'body': json.dumps(str(dataframe_file))}
