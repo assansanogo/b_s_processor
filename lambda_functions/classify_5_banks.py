@@ -69,8 +69,8 @@ def classify_liberta_leasing_convert_handler(event, context):
         dest_file = f_path
         dataframe_file = pd.read_excel(dest_file)
         
-        dataframe_file["Narration_Vectorized"] = dataframe_file["Narration"].apply(lambda x: model_doc2vec.infer_vector(x.split(" ")))
-        dataframe_file["CLASSE"] = dataframe_file["Narration_Vectorized"].apply(lambda x : clf.predict(x))
+        dataframe_file["Narration_Vectorized"] = dataframe_file["Narration"].apply(lambda x: model_Doc2Vec.infer_vector(x.split(" ")))
+        dataframe_file["CLASSE"] = dataframe_file["Narration_Vectorized"].apply(lambda x : model_NLP.predict(x))
         
         
         return {'headers': {'Content-Type':'application/json'}, 
