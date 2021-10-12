@@ -16,7 +16,7 @@ import gensim
 import joblib
 
 
-def download_url(url):
+def download_url(url, ext):
     '''
     utility funcction which downloads pdf to local environment
     '''
@@ -25,7 +25,7 @@ def download_url(url):
     r = requests.get(url, stream=True)
     
     # the pdf filename is extracted from the presigned url
-    file_name = [el for el in url.split("/") if (".xlsx" in el)][0]
+    file_name = [el for el in url.split("/") if (f".{ext}" in el)][0]
     os.makedirs('/tmp', exist_ok=True)
     
     # open a file to dump the stream in
@@ -54,11 +54,13 @@ def classify_liberta_leasing_convert_handler(event, context):
     model_Doc2Vec_path = event["model_Doc2Vec_path"]
     model_NLP_path = event["model_NLP_path"]
     
-    model_Doc2Vec = import_model(model_Doc2Vec_path) 
-    local_model_NLP_path = download_url(model_NLP_path)
+    local_model_Doc2Vec_path = download_url(model_Doc2Vec_path, "model")
+    model_Doc2Vec = import_model(local_model_Doc2Vec_path) 
     
+    local_model_NLP_path = download_url(model_NLP_path,"pkl")
     model_NLP = joblib.load(local_model_NLP_path)
-    f_path = download_url(input_file_url)
+    
+    f_path = download_url(input_file_url, "xlsx")
     
 
     try:
