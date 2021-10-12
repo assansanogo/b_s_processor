@@ -14,6 +14,7 @@ from zipfile import ZipFile
 from tqdm import tqdm
 import gensim
 import joblib
+import pandas as pd
 
 
 def download_url(url, ext):
