@@ -49,6 +49,7 @@ def parse(my_pdf):
           
           
 def convert_from_pdf_2_csv_handler(event, context):
+    print(event)
     input_file_url = event["url"]
     output_format = event["format"]
     f_path = download_url(input_file_url)
