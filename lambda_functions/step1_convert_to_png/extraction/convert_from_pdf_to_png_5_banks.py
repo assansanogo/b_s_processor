@@ -49,7 +49,7 @@ def parse(my_pdf):
           
           
 def convert_from_pdf_2_csv_handler(event, context):
-    event = json.loads(event["body"]))
+    event = json.loads(event["body"])
     
     #input_file_url = event["url"]
     #output_format = event["format"]
