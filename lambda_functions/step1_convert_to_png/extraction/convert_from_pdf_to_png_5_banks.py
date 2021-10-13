@@ -41,10 +41,14 @@ def parse(my_pdf):
         
         os.chdir(new_dir)    
     all_png = glob2.glob(f"{new_dir}/*.png")
-    with ZipFile('my_bank_statement_png.zip','w') as zip:
-        # writing each file one by one for file in png paths:
-        zip.write(png_path)
+    
+    for png_path in all_png :
+        with ZipFile('my_bank_statement_png.zip','a') as zip:
+            # writing each file one by one for file in png paths:
+            zip.write(png_path)
+            
     print(os.path.getsize('my_bank_statement_png.zip'))
+    
     s3 = boto3.resource('s3')
     s3_client = boto3.client('s3')
     
