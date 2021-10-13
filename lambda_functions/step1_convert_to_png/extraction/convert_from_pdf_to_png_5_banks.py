@@ -58,7 +58,8 @@ def convert_from_pdf_2_csv_handler(event, context):
     
     try:
         # when no error :process and returns json
-        dest_file = parse(f_path)
+        #dest_file = parse(f_path)
+        dest_file = str(event)
         return {'headers': {'Content-Type':'application/json'}, 
         'statusCode': 200,
         'body': json.dumps(dest_file)}
