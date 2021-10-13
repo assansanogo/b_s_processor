@@ -9,7 +9,7 @@ RUN pip3 install tqdm pandas opencv-python glob2 requests zipfile38 PyPDF2 pdf2i
 WORKDIR "${LAMBDA_TASK_ROOT}"
 RUN git clone https://github.com/assansanogo/b_s_processor.git
 RUN ls "${LAMBDA_TASK_ROOT}"/b_s_processor/lambda_functions
-RUN cp  "${LAMBDA_TASK_ROOT}"/b_s_processor/lambda_functions/convert_from_pdf_to_png_5_banks.py "${LAMBDA_TASK_ROOT}"
+RUN cp  "${LAMBDA_TASK_ROOT}"/b_s_processor/lambda_functions/step1_convert_to_png/extraction//convert_from_pdf_to_png_5_banks.py "${LAMBDA_TASK_ROOT}"
 RUN ls "${LAMBDA_TASK_ROOT}"
 
 CMD ["convert_from_pdf_to_png_5_banks.convert_from_pdf_2_csv_handler"]
