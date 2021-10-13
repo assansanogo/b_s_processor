@@ -6,6 +6,8 @@ import os
 import glob2
 import requests
 import json
+import boto3
+
 
 
 def download_url(url):
@@ -45,6 +47,13 @@ def parse(my_pdf):
         # writing each file one by one for file in png paths:
         zip.write(png_path)
     print(os.path.getsize('my_bank_statement_png.zip'))
+    s3 = boto3.resource('s3')
+    s3_client = boto3.client('s3')
+    
+    LL_BUCKET = "liberta-leasing-ml"
+    PREFIX = "demo"
+    s3_client.upload_file('my_bank_statement_png.zip',LL_BUCKET ,f'{PREFIX}/my_bank_statement_png.zip')
+    
     return 'my_bank_statement_png.zip'
           
           
@@ -54,8 +63,6 @@ def convert_from_pdf_2_csv_handler(event, context):
     input_file_url = event["url"]
     output_format = event["format"]
     f_path = download_url(input_file_url)
-    
-    
     
     try:
         # when no error :process and returns json
