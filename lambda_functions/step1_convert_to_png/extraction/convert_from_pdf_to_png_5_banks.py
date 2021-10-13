@@ -8,8 +8,6 @@ import requests
 import json
 import boto3
 
-
-
 def download_url(url):
     '''
     utility funcction which downloads pdf to local environment
@@ -50,8 +48,9 @@ def parse(my_pdf):
     s3 = boto3.resource('s3')
     s3_client = boto3.client('s3')
     
-    LL_BUCKET = "liberta-leasing-ml"
-    PREFIX = "demo"
+    LL_BUCKET = os.environ["BUCKET_DEST"]
+    PREFIX = os.environ["PREFIX_DEST"]
+    
     s3_client.upload_file('my_bank_statement_png.zip',LL_BUCKET ,f'{PREFIX}/my_bank_statement_png.zip')
     
     return 'my_bank_statement_png.zip'
