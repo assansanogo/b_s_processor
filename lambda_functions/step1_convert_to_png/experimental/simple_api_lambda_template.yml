@@ -14,7 +14,7 @@ Resources: # creates an AWS lambda  with selected runtime, code zipped as an art
       GetML:
         Type: Api
         Properties:
-          path: /{proxy+}
+          Path: /{proxy+}
           Method: ANY
 ListTable: AWS::Serverless::SimpleTable #(create a AmazonDB table with 5 R&W limits)
   
