@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  LambdaMLFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+    CodeUri: s3://sam-demo-bucket/todo_list.zip
+    Handler: app.handler
+    Runtime: python3.9
+    Policies: AmazonDynamoDBReadOnlyAccess
+    Events:
+      GetML:
+        Type: Api
+        Properties:
+          path: /{proxy+}
+          Method: ANY
+ListTable: AWS::Serverless::SimpleTable
+  
