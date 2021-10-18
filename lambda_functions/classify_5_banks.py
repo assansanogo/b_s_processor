@@ -76,11 +76,11 @@ def classify_liberta_leasing_convert_handler(event, context):
         dataframe_file["Narration_Vectorized"] = dataframe_file["Narration"].apply(lambda x: model_Doc2Vec.infer_vector(x.split(" ")))
         dataframe_file["CLASSE"] = dataframe_file["Narration_Vectorized"].apply(lambda x : model_NLP.predict(x.reshape(1, -1)))
         
-        s3Client = boto3.client('s3')
+        s3_client = boto3.client('s3')
         local_filename = '/tmp/classified_file.xlsx'
         dataframe_file.to_excel(local_filename, index=None)
         response = s3_client.upload_file(local_file_name, OUTPUT_BUCKET_NAME, object_name)
-        upload_details = s3Client.generate_presigned_url(Bucket=OUTPUT_BUCKET_NAME, Key=OUTPUT_FILE_NAME, ExpiresIn = 100)
+        upload_details = s3_client.generate_presigned_url(Bucket=OUTPUT_BUCKET_NAME, Key=OUTPUT_FILE_NAME, ExpiresIn = 100)
         
         
         return {'headers': {'Content-Type':'application/json'}, 
