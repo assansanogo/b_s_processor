@@ -49,7 +49,12 @@ def import_model(model_path):
   # problem with pngs
   
 def classify_liberta_leasing_convert_handler(event, context):
-
+    '''
+    function whose responsibility is to classify
+    '''
+    OUTPUT_FILE_NAME = os.environ["output_file_name"]
+    OUTPUT_BUCKET_NAME = os.environ["output_bucket_name"]
+    
     input_file_url = event["url"]
     output_format = event["format"]
     model_Doc2Vec_path = event["model_Doc2Vec_path"]
@@ -68,14 +73,16 @@ def classify_liberta_leasing_convert_handler(event, context):
         # when no error :process and returns json
         dest_file = f_path
         dataframe_file = pd.read_excel(dest_file)
-        
         dataframe_file["Narration_Vectorized"] = dataframe_file["Narration"].apply(lambda x: model_Doc2Vec.infer_vector(x.split(" ")))
         dataframe_file["CLASSE"] = dataframe_file["Narration_Vectorized"].apply(lambda x : model_NLP.predict(x.reshape(1, -1)))
+        
+        s3Client = boto3.client('s3')
+        upload_details = s3Client.generate_presigned_post(Bucket=OUTPUT_BUCKET_NAME, Key=OUTPUT_FILE_NAME, ExpiresIn = 100)
         
         
         return {'headers': {'Content-Type':'application/json'}, 
                 'statusCode': 200,
-                'body': json.dumps(str(dataframe_file))}
+                'body': json.dumps(str(upload_details))}
 
     except Exception as e :
         # in case of errors return a json with the error description
