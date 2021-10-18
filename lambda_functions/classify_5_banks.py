@@ -79,7 +79,7 @@ def classify_liberta_leasing_convert_handler(event, context):
         s3_client = boto3.client('s3')
         local_file_name = '/tmp/classified_file.xlsx'
         dataframe_file.to_excel(local_file_name, index=None)
-        response = s3_client.upload_file(local_file_name, OUTPUT_BUCKET_NAME, object_name)
+        response = s3_client.upload_file(local_file_name, OUTPUT_BUCKET_NAME, OUTPUT_FILE_NAME)
         upload_details = s3_client.generate_presigned_url(Bucket=OUTPUT_BUCKET_NAME, Key=OUTPUT_FILE_NAME, ExpiresIn = 100)
         
         
