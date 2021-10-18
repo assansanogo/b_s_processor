@@ -12,7 +12,6 @@ RUN cd darknet/data \
 &&  wget https://liberta-leasing-ml.s3.eu-west-1.amazonaws.com/data/yolov4-csp_best.weights \
 &&  wget https://liberta-leasing-ml.s3.eu-west-1.amazonaws.com/data/configuration/yolov4-csp_test.cfg
 
-
 ENV BATCH_SIZE = 1
 ENV DATA_FILE = ./obj.data
 ENV OBJ_NAMES = ./obj.OBJ_NAMES
