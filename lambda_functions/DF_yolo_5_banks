@@ -1,0 +1,41 @@
+FROM amazon/aws-lambda-python:3.9
+WORKDIR /home/ubuntu
+RUN yum update && yum install make curl wget sudo git gcc-c++ libgl1 libgl1-mesa-glx mesa-libGL ffmpeg libsm6 libxext6 -y
+RUN pip3 install tqdm pandas opencv-python glob2 requests --target "${LAMBDA_TASK_ROOT}"
+
+WORKDIR "${LAMBDA_TASK_ROOT}"
+RUN git clone https://github.com/assansanogo/darknet.git
+RUN cd darknet && make -j8
+RUN cd darknet/data \
+&&  wget https://liberta-leasing-ml.s3.eu-west-1.amazonaws.com/data/obj.data \
+&&  wget https://liberta-leasing-ml.s3.eu-west-1.amazonaws.com/data/obj.names \
+&&  wget https://liberta-leasing-ml.s3.eu-west-1.amazonaws.com/data/yolov4-csp_best.weights \
+&&  wget https://liberta-leasing-ml.s3.eu-west-1.amazonaws.com/data/configuration/yolov4-csp_test.cfg
+
+
+ENV BATCH_SIZE = 1
+ENV DATA_FILE = ./obj.data
+ENV OBJ_NAMES = ./obj.OBJ_NAMES
+ENV MODEL_WEIGHTS = ./yolov4-csp_best.weights
+ENV MODEL_CFG = ./yolov4-csp_test.cfg
+
+WORKDIR "${LAMBDA_TASK_ROOT}"/darknet
+RUN  cd qualify_test && wget https://liberta-leasing-ml.s3.eu-west-1.amazonaws.com/data/qualify_data/MR+Adefisoye+Hezekiah+STATEMENT_4.png
+
+#RUN git clone https://github.com/assansanogo/b_s_processor.git
+
+RUN cp "${LAMBDA_TASK_ROOT}"/darknet/*.py "${LAMBDA_TASK_ROOT}"
+RUN cp "${LAMBDA_TASK_ROOT}"/darknet/*.so "${LAMBDA_TASK_ROOT}"
+RUN cp "${LAMBDA_TASK_ROOT}"/darknet/data/obj.* "${LAMBDA_TASK_ROOT}"
+RUN cp "${LAMBDA_TASK_ROOT}"/darknet/data/yolov4-csp*.* "${LAMBDA_TASK_ROOT}"
+
+#RUN cp "${LAMBDA_TASK_ROOT}"/darknet/darknet ../darknet
+
+WORKDIR "${LAMBDA_TASK_ROOT}"
+RUN git clone https://github.com/assansanogo/b_s_processor.git
+RUN ls "${LAMBDA_TASK_ROOT}"/b_s_processor/lambda_functions
+RUN cp  "${LAMBDA_TASK_ROOT}"/b_s_processor/lambda_functions/convert_to_csv.py "${LAMBDA_TASK_ROOT}"
+RUN ls "${LAMBDA_TASK_ROOT}"
+
+#CMD
+CMD ["darknet_LL.yolo_liberta_leasing_convert_handler"]
