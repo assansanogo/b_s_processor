@@ -55,6 +55,9 @@ def classify_liberta_leasing_convert_handler(event, context):
     OUTPUT_FILE_NAME = os.environ["output_file_name"]
     OUTPUT_BUCKET_NAME = os.environ["output_bucket_name"]
     
+    if 'body' in list(event.keys()):
+        event = json.loads(event['body'])
+        
     input_file_url = event["url"]
     output_format = event["format"]
     model_Doc2Vec_path = event["model_Doc2Vec_path"]
@@ -80,7 +83,7 @@ def classify_liberta_leasing_convert_handler(event, context):
         local_file_name = '/tmp/classified_file.xlsx'
         dataframe_file.to_excel(local_file_name, index=None)
         response = s3_client.upload_file(local_file_name, OUTPUT_BUCKET_NAME, OUTPUT_FILE_NAME)
-        upload_details = s3_client.generate_presigned_url(Params={"Bucket":OUTPUT_BUCKET_NAME, "Key":OUTPUT_FILE_NAME}, ExpiresIn = 100)
+        upload_details = s3_client.generate_presigned_url('post_object', Params={"Bucket":OUTPUT_BUCKET_NAME, "Key":OUTPUT_FILE_NAME}, ExpiresIn = 100)
         
         
         return {'headers': {'Content-Type':'application/json'}, 
