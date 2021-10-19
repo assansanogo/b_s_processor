@@ -83,15 +83,15 @@ def classify_liberta_leasing_convert_handler(event, context):
                          "POLARIS_BANK":"Details",
                          "ACCESS_BANK":"Description"}
         
-        column_name = bank_columns[output_format]
-        
+        column_name = bank_columns[output_format]        
             
         dataframe_file["Narration_Vectorized"] = dataframe_file[column_name].apply(lambda x: model_Doc2Vec.infer_vector(x.split(" ")))
-        dataframe_file["CLASSE"] = dataframe_file["Narration_Vectorized"].apply(lambda x : model_NLP.predict(x.reshape(1, -1)))
+        dataframe_file["CLASSE"] = dataframe_file["Narration_Vectorized"].apply(lambda x : model_NLP.predict(x.reshape(1, -1))[0])
         
         s3_client = boto3.client('s3')
         local_file_name = '/tmp/classified_file.xlsx'
         dataframe_file.to_excel(local_file_name, index=None)
+        
         response = s3_client.upload_file(local_file_name, OUTPUT_BUCKET_NAME, OUTPUT_FILE_NAME)
         upload_details = s3_client.generate_presigned_url('get_object', Params={"Bucket":OUTPUT_BUCKET_NAME, "Key":OUTPUT_FILE_NAME}, ExpiresIn = 100)
         
