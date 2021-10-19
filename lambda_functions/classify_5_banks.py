@@ -76,7 +76,17 @@ def classify_liberta_leasing_convert_handler(event, context):
         # when no error :process and returns json
         dest_file = f_path
         dataframe_file = pd.read_excel(dest_file)
-        dataframe_file["Narration_Vectorized"] = dataframe_file["Narration"].apply(lambda x: model_Doc2Vec.infer_vector(x.split(" ")))
+        # the narration columns varies from 1 bank to another
+        bank_columns = { "WEMA_BANK": "Narration",
+                         "UBA_BANK":"Narration",
+                         "STANDARD_CHARTERED_BANK": "Transaction",
+                         "POLARIS_BANK":"Details",
+                         "ACCESS_BANK":"Description"}
+        
+        column_name = bank_columns[output_format]
+        
+            
+        dataframe_file["Narration_Vectorized"] = dataframe_file[column_name].apply(lambda x: model_Doc2Vec.infer_vector(x.split(" ")))
         dataframe_file["CLASSE"] = dataframe_file["Narration_Vectorized"].apply(lambda x : model_NLP.predict(x.reshape(1, -1)))
         
         s3_client = boto3.client('s3')
