@@ -1,7 +1,7 @@
 FROM amazon/aws-lambda-python:3.9
 WORKDIR /home/ubuntu
 RUN yum update && yum install make curl wget sudo git gcc-c++ libgl1 libgl1-mesa-glx mesa-libGL ffmpeg libsm6 libxext6 -y
-RUN pip3 install tqdm pandas glob2 requests zipfile38 openpyxl --target "${LAMBDA_TASK_ROOT}"
+RUN pip3 install tqdm pandas glob2 requests zipfile38 openpyxl fsspec --target "${LAMBDA_TASK_ROOT}"
 
 WORKDIR "${LAMBDA_TASK_ROOT}"
 RUN git clone https://github.com/assansanogo/b_s_processor.git
