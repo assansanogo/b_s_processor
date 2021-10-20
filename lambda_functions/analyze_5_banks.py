@@ -92,7 +92,7 @@ def create_transfer_between_summary(corrected_dataframe):
     '''
     summarizes the transferts
     '''
-    corrected_dataframe = corrected_dataframe[corrected_dataframe["CLASSE"]=="transfer"]
+    corrected_dataframe = corrected_dataframe[corrected_dataframe["CLASSE"]=="transfert"]
     corrected_dataframe.loc[:]['Trans. Date'] = pd.to_datetime(corrected_dataframe['Trans. Date'], errors='coerce')
     corrected_dataframe.set_index('Trans. Date', inplace=True)
     corrected_dataframe.index = pd.to_datetime(corrected_dataframe.index)
@@ -276,7 +276,7 @@ def loan_analysis(amount, n_months, data_path, bank):
         
     #df["CLASSE"] = df["preds"]
     df_loan = df[df["CLASSE"]=='loan']
-    df_transfer = df[df["CLASSE"]=='transfer']
+    df_transfer = df[df["CLASSE"]=='transfert']
     df_salary = df[df["CLASSE"]=='salary']
         
     print(f"the shape of df_salary is : {df_salary.shape}")
