@@ -246,8 +246,8 @@ def ETL_bank(raw_df, bank_name):
         df_no_index['Debits'] =  df_no_index["Withdrawal"]
         df_no_index['Credits'].fillna(0, inplace=True)
         df_no_index['Debits'].fillna(0, inplace=True)
-        df_no_index['Credits'] = df_no_index['Credits'].lambda(x: str(x))
-        df_no_index['Credits'] = df_no_index['Debits'].lambda(x: str(x))
+        df_no_index['Credits'] = df_no_index['Credits'].apply(lambda x: str(x))
+        df_no_index['Credits'] = df_no_index['Debits'].apply(lambda x: str(x))
         
     elif bank_name == "ACCESS_BANK":
         df_no_index['Trans. Date'] = df_no_index["Posted date"]
