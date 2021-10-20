@@ -9,4 +9,4 @@ RUN ls "${LAMBDA_TASK_ROOT}"/b_s_processor/lambda_functions
 RUN cp  "${LAMBDA_TASK_ROOT}"/b_s_processor/lambda_functions/convert_to_csv_5_banks.py "${LAMBDA_TASK_ROOT}"
 RUN ls "${LAMBDA_TASK_ROOT}"
 
-CMD ["analyze_5_banks.liberta_leasing_convert_handler"]
+CMD ["analyze_5_banks.liberta_leasing_analyze_handler"]
