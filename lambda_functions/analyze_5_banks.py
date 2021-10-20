@@ -241,7 +241,7 @@ def ETL_bank(raw_df, bank_name):
     elif bank_name == "WEMA_BANK":
         df_no_index['Trans. Date'] = df_no_index["Tran date"]
         df_no_index['Credits'] = df_no_index["Deposit"]
-        df_no_index['Debits'] =  df_no_index["Withdraw"]
+        df_no_index['Debits'] =  df_no_index["Withdrawal"]
         
     elif bank_name == "ACCESS_BANK":
         df_no_index['Trans. Date'] = df_no_index["Posted date"]
