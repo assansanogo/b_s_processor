@@ -293,6 +293,7 @@ def loan_analysis(amount, n_months, data_path, bank):
     
     # the ratio to borrow is supplied by LL
     # if the ratio is under the limit (the ratio is calculated based on LL formula) 
+    print(result_loan.head())
     print(original_ratio_to_borrow)
 
     if  original_ratio_to_borrow < DTI[salary_bracket]:
