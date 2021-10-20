@@ -268,7 +268,7 @@ def loan_analysis(amount, n_months, data_path, bank):
         df["CLASSE"] = df["CLASSE"].str.lower()
     
     # depending on the banks some columns must be mapped
-    df = ETL_bank(raw_df, bank)
+    df = ETL_bank(df, bank)
                 
         
     #df["CLASSE"] = df["preds"]
