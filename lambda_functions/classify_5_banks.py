@@ -87,6 +87,7 @@ def classify_liberta_leasing_convert_handler(event, context):
             
         dataframe_file["Narration_Vectorized"] = dataframe_file[column_name].apply(lambda x: model_Doc2Vec.infer_vector(x.split(" ")))
         dataframe_file["CLASSE"] = dataframe_file["Narration_Vectorized"].apply(lambda x : model_NLP.predict(x.reshape(1, -1))[0])
+        dataframe_file["BANK_ID"] = output_format
         
         s3_client = boto3.client('s3')
         local_file_name = '/tmp/classified_file.xlsx'
