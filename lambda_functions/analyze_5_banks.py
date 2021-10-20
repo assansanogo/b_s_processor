@@ -231,7 +231,7 @@ def salary_variance(corrected_dataframe):
 
 
 def ETL_bank(raw_df, bank_name):
-    df_no_index = raw_df[[col for col in df.columns if "Unnamed" not in col]]
+    df_no_index = raw_df[[col for col in raw_df.columns if "Unnamed" not in col]]
     
     if bank_name == "STANDARD_CHARTERED_BANK":
         df_no_index['Trans. Date'] = df_no_index["Date"]
