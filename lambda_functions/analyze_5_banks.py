@@ -89,9 +89,11 @@ def create_salary_bracket(salary_dollars):
     return bracket
 
 def create_transfer_between_summary(corrected_dataframe):
-
+    '''
+    summarizes the transferts
+    '''
     corrected_dataframe = corrected_dataframe[corrected_dataframe["CLASSE"]=="transfer"]
-    corrected_dataframe.loc[:]["Trans. Date"] = pd.to_datetime(corrected_dataframe["Trans. Date"], errors='coerce')
+    corrected_dataframe.loc[:]['Trans. Date'] = pd.to_datetime(corrected_dataframe['Trans. Date'], errors='coerce')
     corrected_dataframe.set_index('Trans. Date', inplace=True)
     corrected_dataframe.index = pd.to_datetime(corrected_dataframe.index)
     
@@ -103,14 +105,16 @@ def create_transfer_between_summary(corrected_dataframe):
 
     transfer_numeric = corrected_dataframe.loc[:,["Debits","Credits"]]
     
+    # replace na by zeroes
     for cat in ["Debits","Credits"] :
         transfer_numeric[cat].fillna(0, inplace=True)
-    
+        
+    # numbers  use "," for more readability
     for cat in ["Debits","Credits"] :
         transfer_numeric[cat] = transfer_numeric[cat].astype(str).str.replace(",","")
-    
+        
+    # effective transferts are the algebric sum of "TO and FRO" transferts
     transfer_numeric["effective"] = transfer_numeric["Credits"].astype('float') - transfer_numeric["Debits"].astype('float')
-    
     
     #aggregation - monthly income
     df_transfer_summary = transfer_numeric[["effective"]].groupby(pd.Grouper(level='Trans. Date',freq='M')).sum()
@@ -118,6 +122,7 @@ def create_transfer_between_summary(corrected_dataframe):
     # check if the salary info describes income or paid salary
     total_transfer = df_transfer_summary["effective"].sum()
     
+    # detailed summary of transferts
     transfer_between_summary_dict = {
         "all_transactions": transfer_numeric,
         "number_of_payments": number_of_transfer,
@@ -139,11 +144,15 @@ def create_salary_summary(corrected_dataframe):
     function which creates  a salary report
     '''
     salary = corrected_dataframe[corrected_dataframe["CLASSE"]=="salary"]
-    print(salary.shape)
+        
+    assert salary.shape[0] != 0
+    
+    # conversion of dates to timestamps
     salary.loc[:]["Trans. Date"] = pd.to_datetime(salary["Trans. Date"], errors='coerce')
     salary.set_index('Trans. Date', inplace=True)
     salary.index = pd.to_datetime(salary.index)
     
+    # computes the number of salary paycheck have been received
     number_of_payments = len(set(list(salary.index)))
     paid_info = np.array([[el.month, el.day] for el in set(list(salary.index))])
     
@@ -159,26 +168,28 @@ def create_salary_summary(corrected_dataframe):
     "paid_to_employees": None
     }
     
-
-    paid_month, paid_day = paid_info[:,0],paid_info[:,1]
+    # info about paid_month and paid_day
+    paid_month, paid_day = paid_info[:,0], paid_info[:,1]
 
     paid_day_mean, paid_day_variance = np.mean(paid_day), np.std(paid_day) 
 
     salary_numeric = salary.loc[:,["Debits","Credits"]]
 
+    # replace NAs by zeroes
     for cat in ["Debits","Credits"] :
         salary_numeric[cat].fillna(0, inplace=True)
 
+    # replace "," by "" (the commas are used for bookkeeping readability)
     for cat in ["Debits","Credits"] :
         salary_numeric[cat] = salary_numeric[cat].astype(str).str.replace(",","")
-
+    # algebric sum
     salary_numeric["effective"] = salary_numeric["Credits"].astype('float') - salary_numeric["Debits"].astype('float')
 
-    #aggregation - monthly income
+    # aggregation - monthly income
     df_salary_summary = salary_numeric[["effective"]].groupby(pd.Grouper(level='Trans. Date',freq='M')).sum()
 
     # check if the salary info describes if it is really a received income or rather a paid salary
-    salary_paid_to_employees = df_salary_summary["effective"].sum() <0
+    salary_paid_to_employees = df_salary_summary["effective"].sum()<0
 
     salary_dict = {
         "all_transactions": salary_numeric,
@@ -198,6 +209,7 @@ def loan_to_salary_ratio(corrected_dataframe):
     '''
     function which creates the loan to salary ratio report 
     '''
+    
     df_loan = create_loan_summary(corrected_dataframe)['loan_summary']
     
     df_salary = create_salary_summary(corrected_dataframe)['salary_summary']
@@ -218,12 +230,48 @@ def salary_variance(corrected_dataframe):
 
 
 
-def loan_analysis(amount, n_months, data_path):
+def ETL_bank(raw_df, bank_name):
+    df_no_index = raw_df[[col for col in df.columns if "Unnamed" not in col]]
+    
+    if bank_name == "STANDARD_CHARTERED_BANK":
+        df_no_index['Trans. Date'] = df_no_index["Date"]
+        df_no_index['Credits'] = df_no_index["Deposit"]
+        df_no_index['Debits'] =  df_no_index["Withdraw"]
+        
+    elif bank_name == "WEMA_BANK":
+        df_no_index['Trans. Date'] = df_no_index["Tran date"]
+        df_no_index['Credits'] = df_no_index["Deposit"]
+        df_no_index['Debits'] =  df_no_index["Withdraw"]
+        
+    elif bank_name == "ACCESS_BANK":
+        df_no_index['Trans. Date'] = df_no_index["Posted date"]
+        df_no_index['Credits'] = df_no_index["Credit"]
+        df_no_index['Debits'] =  df_no_index["Debit"]
+        
+    elif bank_name == "UBA_BANK":
+        df_no_index['Trans. Date'] = df_no_index["TRANS DATE"]
+        df_no_index['Credits'] = df_no_index["CREDIT"]
+        df_no_index['Debits'] =  df_no_index["DEBIT"]
+        
+    
+    return df_no_index
+                  
+
+def loan_analysis(amount, n_months, data_path, bank):
     '''
     function which returns the amount borrowable per month
     '''
-    df = pd.read_csv(data_path, sep=';')
-    df["CLASSE"] = df["preds"]
+    if data_path.endswith(".csv"): 
+        df = pd.read_csv(data_path, sep=';')
+    elif data_path.endswith(".xlsx"): 
+        df = pd.read_excel(data_path)
+        df["CLASSE"] = df["CLASSE"].str.lower()
+    
+    # depending on the banks some columns must be mapped
+    df = ETL_bank(raw_df, bank)
+                
+        
+    #df["CLASSE"] = df["preds"]
     df_loan = df[df["CLASSE"]=='loan']
     df_transfer = df[df["CLASSE"]=='transfer']
     df_salary = df[df["CLASSE"]=='salary']
@@ -234,7 +282,7 @@ def loan_analysis(amount, n_months, data_path):
     #  build the salary report
     result_salary = create_salary_summary(df)['salary_summary']
 
-    # build the loan to salary ratio 
+    # build the loan to salary ratio (via the helper function)
     result_loan_to_summary, salary_bracket = loan_to_salary_ratio(df)
 
     # access to debt
@@ -259,6 +307,10 @@ def loan_analysis(amount, n_months, data_path):
         
 
     # if the ratio is under the limit : loan is denied
+    #
+    # monthly_allowed_amount_to_borrow,  ratio_to_borrow, tenure => 0
+    # borrow_as_is = False
+        
     else:
         ratio_to_borrow = 0
         monthly_allowed_amount_to_borrow = pd.DataFrame([0], columns=["monthly_allowed"]).mean()
@@ -266,49 +318,6 @@ def loan_analysis(amount, n_months, data_path):
         tenure = pd.DataFrame([0], columns=["monthly_allowed"])
         
     return tenure, monthly_allowed_amount_to_borrow, amount,n_months,salary_bracket, borrow_as_is, original_ratio_to_borrow
-
-
-
-
-def full_analysis(data_path):
-    '''
-    perform all steps to extract metrics to deny of accept loans
-    '''
-    df = pd.read_csv(data_path, sep=',')
-    print(df.shape)
-    df_loan = df[df["CLASSE"]=='loan']
-    df_transfer = df[df["CLASSE"]=='transfer']
-    df_salary = df[df["CLASSE"]=='salary']
-
-    result_loan = create_loan_summary(df)
-
-    #result_transfer = create_transfer_between_summary(df)
-
-    result_salary = create_salary_summary(df)
-
-    result_loan_to_summary, salary_bracket = loan_to_salary_ratio(df)
-
-    result_no_access_to_debt= no_access_to_direct_debit_criteria(df)
-
-
-    n_payments = result_salary["number_of_payments"]
-    paid_months = (" ").join([str(m) for m in result_salary["paid_month"]])
-    paid_days = (" ").join([str(m) for m in result_salary["paid_days"]])
-    mean_day_salary = result_salary["paid_day_mean"]
-    var_salary = result_salary["paid_day_variance"]
-    no_access_to_debt = result_no_access_to_debt
-
-    return(result_loan["n_loans_summary"], 
-            result_loan["loan_summary"],
-            result_salary["number_of_payments"],
-            result_salary["paid_month"],
-            result_salary["paid_days"],
-            result_salary["paid_day_mean"],
-            result_salary["paid_day_variance"],
-            result_salary["salary_summary"],
-            result_no_access_to_debt,
-            result_loan_to_summary,
-            salary_bracket)
 
 
 def liberta_leasing_analyze_handler(event, context):
@@ -323,8 +332,12 @@ def liberta_leasing_analyze_handler(event, context):
   amount = event["amount"]
   n_months = event["n_months"]
   url = event["url"]
+  bank = event["bank"]
 
-  LL_tenure, LL_monthly_allowed_amount_to_borrow, LL_amount, LL_n_months, LL_salary_bracket, LL_borrow_as_is, LL_original_ratio_to_borrow = loan_analysis(amount, n_months, url)
+
+        
+
+  LL_tenure, LL_monthly_allowed_amount_to_borrow, LL_amount, LL_n_months, LL_salary_bracket, LL_borrow_as_is, LL_original_ratio_to_borrow = loan_analysis(amount, n_months, url, bank)
   return {'statusCode' : 200,
          'body': json.dumps({
                  "tenure": json.dumps(LL_tenure),
