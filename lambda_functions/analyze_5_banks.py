@@ -338,6 +338,7 @@ def liberta_leasing_analyze_handler(event, context):
         
 
   LL_tenure, LL_monthly_allowed_amount_to_borrow, LL_amount, LL_n_months, LL_salary_bracket, LL_borrow_as_is, LL_original_ratio_to_borrow = loan_analysis(amount, n_months, url, bank)
+  print(LL_tenure)
   return {'statusCode' : 200,
          'body': json.dumps({
                  "tenure": json.dumps(LL_tenure),
