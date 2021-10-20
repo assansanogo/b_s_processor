@@ -268,6 +268,7 @@ def loan_analysis(amount, n_months, data_path, bank):
     elif data_path.endswith(".xlsx"): 
         df = pd.read_excel(data_path)
         df["CLASSE"] = df["CLASSE"].str.lower()
+    print(df.head(5))
     
     # depending on the banks some columns must be mapped
     df = ETL_bank(df, bank)
@@ -277,6 +278,9 @@ def loan_analysis(amount, n_months, data_path, bank):
     df_loan = df[df["CLASSE"]=='loan']
     df_transfer = df[df["CLASSE"]=='transfer']
     df_salary = df[df["CLASSE"]=='salary']
+    print("the shape of df_salary is : {df_salary.shape}"
+    print("the shape of df_transfer is : {df_transfer.shape}"
+    print("the shape of df_loan is : {df_loan.shape}"
 
     # build the loan summary report
     result_loan = create_loan_summary(df)['loan_summary']
