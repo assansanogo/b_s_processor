@@ -65,7 +65,7 @@ def create_loan_summary(corrected_dataframe):
         total_n_loans_summary['#n loans'] = total_n_loans_summary['#n loans'].apply(lambda x: np.abs(x))
         
         df_loan_summary["effective"] = -1*df_loan_summary["Debits"].astype('float')+df_loan_summary["Credits"].astype('float')
-        
+        print(df_loan_summary)
         loan_dict = {
             "loan_summary" : df_loan_summary, 
             "n_loans_summary": total_n_loans_summary
@@ -358,7 +358,7 @@ def liberta_leasing_analyze_handler(event, context):
   print(LL_tenure)
   return {'statusCode' : 200,
          'body': json.dumps({
-                 "tenure": json.dumps(LL_tenure),
+                 "tenure": json.dumps(LL_tenure.iloc[0]),
                  "monthly_allowed_amount_to_borrow": json.dumps(LL_monthly_allowed_amount_to_borrow),
                  "amount_requested": json.dumps(LL_amount),
                  "tenure_requested": json.dumps(LL_n_months),
