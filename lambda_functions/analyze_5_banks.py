@@ -358,7 +358,7 @@ def liberta_leasing_analyze_handler(event, context):
   print(LL_tenure)
   return {'statusCode' : 200,
          'body': json.dumps({
-                 "tenure": json.dumps(LL_tenure.iloc[0]),
+                 "tenure": json.dumps(str(LL_tenure.iloc[0])),
                  "monthly_allowed_amount_to_borrow": json.dumps(LL_monthly_allowed_amount_to_borrow),
                  "amount_requested": json.dumps(LL_amount),
                  "tenure_requested": json.dumps(LL_n_months),
