@@ -142,7 +142,7 @@ def png_2_csv(file_name):
         s3_client = boto3.client('s3')
         
         try:
-            object_name = "job/"+new_file_name.split("/")[-1]
+            object_name = f"job_{file_name.split("/")[-1].replace(".","_")}/{new_file_name.split("/")[-1]}"
             bucket = "liberta-leasing-ml"
             response = s3_client.upload_file(new_file_name, bucket, object_name)
             result = object_name
@@ -156,13 +156,17 @@ def png_2_csv(file_name):
             
 def parse(f_path):
     all_files = glob2.glob(os.path.join(f_path, "*/*.png"))
+    paths = []
     for file_name in tqdm(all_files):
-        png_2_csv(file_name)
+        paths.append(png_2_csv(file_name))
         
-    return glob2.glob(os.path.join(f_path, "*/*.csv"))
+    return paths
 
 def png2csv_liberta_leasing_convert_handler(event, context):
-  
+    
+    if "body" in event.keys():
+        event = json.loads(event["body"])
+        
     input_file_url = event["url"]
     output_format = event["format"]
     f_path = download_url(input_file_url)
