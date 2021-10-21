@@ -11,4 +11,4 @@ RUN ls "${LAMBDA_TASK_ROOT}"/b_s_processor/lambda_functions
 RUN cp  "${LAMBDA_TASK_ROOT}"/b_s_processor/lambda_functions/convert_from_pdf_to_png_5_banks.py "${LAMBDA_TASK_ROOT}"
 RUN ls "${LAMBDA_TASK_ROOT}"
 
-CMD ["convert_from_pdf_to_png_5_banks.convert_from_pdf_2_csv_handler"]
+CMD ["convert_from_pdf_to_png_5_banks.convert_from_pdf_2_png_handler"]
