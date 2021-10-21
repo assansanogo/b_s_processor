@@ -50,7 +50,7 @@ def parse(my_pdf):
           
 def convert_from_pdf_2_png_handler(event, context):
     
-    if "body" not in event.keys():
+    if "body" in event.keys():
         event = json.loads(event["body"])
         
     input_file_url = event["url"]
