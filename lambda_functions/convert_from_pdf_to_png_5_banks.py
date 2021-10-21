@@ -48,7 +48,7 @@ def parse(my_pdf):
     return 'my_bank_statement_png.zip'
           
           
-def convert_from_pdf_2_csv_handler(event, context):
+def convert_from_pdf_2_png_handler(event, context):
     
     if "body" not in event.keys():
         event = json.loads(event["body"])
