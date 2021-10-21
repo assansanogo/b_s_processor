@@ -243,6 +243,10 @@ def liberta_leasing_convert_handler(event, context):
     formatting of the lambda handler to be compatible with by AWS
     '''
     # information extracted from the event payload
+    
+    if "body" in event.keys():
+        event = json.loads(event["body"]
+                           
     zip_url = event["url"]
     bank_format = event["format"]
     
@@ -250,9 +254,7 @@ def liberta_leasing_convert_handler(event, context):
     # download file locally and extract a zip
     f_path = download_url(zip_url)
 
-    
-    
-    
+     
     try:
         # when no error :process and returns json
         #processed_dataframe = process_bank_statements(f_name, bank_format)
