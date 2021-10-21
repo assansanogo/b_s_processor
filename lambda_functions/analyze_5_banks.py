@@ -303,15 +303,15 @@ def loan_analysis(amount, n_months, data_path, bank):
     result_no_access_to_debt = no_access_to_direct_debit_criteria(df)
     
     # loan entries can be positive/negative - same goes for salary  ("effective" means algebric sum)
-    original_ratio_to_borrow =  (np.abs(result_loan["effective"]) / result_salary["effective"]).mean()
+    original_ratio_to_borrow =  (np.abs(result_loan["effective"]) / result_salary["effective"]+ 1e-10).mean()
     
     # the ratio to borrow is supplied by LL
     # if the ratio is under the limit (the ratio is calculated based on LL formula) 
-    print(result_loan.head())
+    print(result_loan)
     print(original_ratio_to_borrow)
 
     if  original_ratio_to_borrow < DTI[salary_bracket]:
-        ratio_to_borrow = ((amount/n_months) + np.abs(result_loan["effective"])) / result_salary["effective"]
+        ratio_to_borrow = ((amount/n_months) + np.abs(result_loan["effective"])) / (result_salary["effective"]+ 1e-10)
         borrow_as_is=True
         # computes a series of monthly allowed amounts
         monthly_allowed_amount_to_borrow = DTI[salary_bracket] * result_salary["effective"] - np.abs(result_loan["effective"])
