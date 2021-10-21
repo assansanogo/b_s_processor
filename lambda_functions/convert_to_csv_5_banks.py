@@ -245,7 +245,7 @@ def liberta_leasing_convert_handler(event, context):
     # information extracted from the event payload
     
     if "body" in event.keys():
-        event = json.loads(event["body"]
+        event = json.loads(event["body"])
                            
     zip_url = event["url"]
     bank_format = event["format"]
