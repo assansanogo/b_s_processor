@@ -21,6 +21,8 @@ def create_loan_summary(corrected_dataframe):
         # convert entries to date format
         #self.data.loc[:]["Trans. Date"] = pd.to_datetime(self.Ds.loan["Trans. Date"], errors='coerce')
         
+        corrected_dataframe["CLASSE"] = corrected_dataframe["CLASSE"].str.lower()
+        
         corrected_dataframe = corrected_dataframe[corrected_dataframe["CLASSE"]=="loan"]
         # create a summary limiting ourselves to some columns
         loan_summary = corrected_dataframe.loc[:,["Trans. Date", "Credits", "Debits"]].copy()
@@ -271,7 +273,8 @@ def loan_analysis(amount, n_months, data_path, bank):
         df = pd.read_csv(data_path, sep=';')
     elif data_path.endswith(".xlsx"): 
         df = pd.read_excel(data_path)
-        df["CLASSE"] = df["CLASSE"].str.lower()
+        
+    df["CLASSE"] = df["CLASSE"].str.lower()
     print(df.head(5))
     
     # depending on the banks some columns must be mapped
