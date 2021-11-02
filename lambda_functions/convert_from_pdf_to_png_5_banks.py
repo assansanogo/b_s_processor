@@ -27,24 +27,32 @@ def download_url(url):
 def parse(my_pdf):
     reader = PyPDF2.PdfFileReader(my_pdf)
     n_pages = len(reader.pages)
+    new_dir = '/tmp'
+    os.makedirs(new_dir, exist_ok=True)
+ 
+    
     for i in tqdm.tqdm(range(n_pages)):
         writer = PyPDF2.PdfFileWriter()
         my_page = reader.getPage(i)
         writer.addPage(my_page)
         output_filename = my_pdf.replace('.pdf', f'_{str(i)}.pdf')
-        new_dir = '/tmp'
-        os.makedirs(new_dir, exist_ok=True)
-        new_path = os.path.join(new_dir, output_filename)
+        _filename = output_filename.split("/")[-1]
+
+        new_path = os.path.join(new_dir, _filename)
+        print(new_dir)
+        
         with open(new_path, 'wb') as output:
             writer.write(output)
         png_path = new_path.replace("pdf","png")
+        print(png_path)
         img_test = convert_from_path(new_path)[0].save(png_path)
         
-        os.chdir(new_dir)    
+           
     all_png = glob2.glob(f"{new_dir}/*.png")
-    with ZipFile('my_bank_statement_png.zip','w') as zip:
-        # writing each file one by one for file in png paths:
-        zip.write(png_path)
+    for png_path in all_png:
+        with ZipFile('my_bank_statement_png.zip','a') as zip:
+            # writing each file one by one for file in png paths:
+            zip.write(png_path)
     print(os.path.getsize('my_bank_statement_png.zip'))
     return 'my_bank_statement_png.zip'
           
