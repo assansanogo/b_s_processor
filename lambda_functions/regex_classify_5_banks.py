@@ -132,7 +132,6 @@ def classify_liberta_leasing_convert_handler(event, context):
     
     f_path = download_url(input_file_url, "xlsx")
     
-
     try:
         # when no error :process and returns json
         dest_file = f_path
@@ -146,12 +145,20 @@ def classify_liberta_leasing_convert_handler(event, context):
         
         column_name = bank_columns[output_format]        
         
-        
-        dataframe_file["CLASSE"] = dataframe_file[column_name].apply(lambda x: check_transaction(x))
+        # upper
+        dataframe_file["UPPER"] = dataframe_file[column_name].apply(lambda x: clean_format(x))
+        # classe
+        dataframe_file["CLASSE"] = dataframe_file["UPPER"].apply(lambda x: check_transaction(x))
+        # id
         dataframe_file["BANK_ID"] = output_format
         
+        # s3 save file
         s3_client = boto3.client('s3')
+        
+        # save to local file excel
         local_file_name = '/tmp/classified_file.xlsx'
+        
+        
         dataframe_file.to_excel(local_file_name, index=None)
         
         response = s3_client.upload_file(local_file_name, OUTPUT_BUCKET_NAME, OUTPUT_FILE_NAME)
