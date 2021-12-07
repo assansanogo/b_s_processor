@@ -186,7 +186,7 @@ def liberta_leasing_convert_handler(event, context):
   DF_LOAN.columns =["CLASSE_LOAN", "Tran date", "TOTAL_LOAN"]
   DF_LOAN.drop(["CLASSE_LOAN"], axis=1, inplace=True)
 
-  summary_df.\
+  summary_df = summary_df.\
   merge(DF_LOAN, on="Tran date", how="outer")
   summary_df.fillna(0, inplace=True)
 
