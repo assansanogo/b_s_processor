@@ -92,7 +92,9 @@ def liberta_leasing_convert_handler(event, context):
   col1 = "Withdrawal"
   col2 = "Deposit"
         
-  df = pd.read_excel(url, sep=';')      
+  df = pd.read_excel(url)      
+
+  cols = [col1,col2] 
   
   for c in cols:
       df[c]= df[c].astype('str').str.strip().str.replace(",","").str.replace("NaN","")
