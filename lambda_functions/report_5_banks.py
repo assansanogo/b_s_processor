@@ -180,14 +180,12 @@ def liberta_leasing_convert_handler(event, context):
   
 
     # df_loan
-  try:
-        DF_LOAN = final_df[final_df["CLASSE"]=="LOAN"].copy()
-        DF_LOAN["Tran date"] = DF_LOAN["Tran date"].dt.strftime('%Y-%m')
-        DF_LOAN.columns =["CLASSE_LOAN", "Tran date", "TOTAL_LOAN"]
-        DF_LOAN.drop(["CLASSE_LOAN"], axis=1, inplace=True)
-  except:
-        summary_df["TOTAL_LOAN"] = 0
-  
+
+  DF_LOAN = final_df[final_df["CLASSE"]=="LOAN"].copy()
+  DF_LOAN["Tran date"] = DF_LOAN["Tran date"].dt.strftime('%Y-%m')
+  DF_LOAN.columns =["CLASSE_LOAN", "Tran date", "TOTAL_LOAN"]
+  DF_LOAN.drop(["CLASSE_LOAN"], axis=1, inplace=True)
+
   summary_df.\
   merge(DF_LOAN, on="Tran date", how="outer")
   summary_df.fillna(0, inplace=True)
