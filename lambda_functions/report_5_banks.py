@@ -45,7 +45,6 @@ def try_convert(x):
     return x
 
 
-
 def liberta_leasing_analyze_handler(event, context):
   '''
   lambda handler function
