@@ -109,7 +109,7 @@ def liberta_leasing_convert_handler(event, context):
   # date
   df["Tran date"] = df["Tran date"].apply(lambda x: pd.to_datetime(x))
   monthly_transactions = df.set_index("Tran date").groupby("CLASSE").resample('M').sum()["Total"]
-  final_df = pd.DataFrame(monthly_transactions).reset_index(inplace=True)
+  final_df = pd.DataFrame(monthly_transactions).reset_index()
   
 
         
