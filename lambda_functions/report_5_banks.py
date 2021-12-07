@@ -111,17 +111,7 @@ def liberta_leasing_convert_handler(event, context):
   monthly_transactions = df.set_index("Tran date").groupby("CLASSE").resample('M').sum()["Total"]
   final_df = pd.DataFrame(monthly_transactions).reset_index(inplace=True)
   
-  # df_loan
-  try:
-        DF_LOAN = final_df[final_df["CLASSE"]=="LOAN"].copy()
-        DF_LOAN["Tran date"] = DF_LOAN["Tran date"].dt.strftime('%Y-%m')
-        DF_LOAN.columns =["CLASSE_LOAN", "Tran date", "TOTAL_LOAN"]
-        DF_LOAN.drop(["CLASSE_LOAN"], axis=1, inplace=True)
-  except:
-        DF_LOAN = pd.DataFrame()
-        DF_LOAN["CLASSE_LOAN"] = None
-        DF_LOAN["TOTAL_LOAN"] = 0
-        DF_LOAN["Tran date"] = pd.to_datetime(None).dt.strftime('%Y-%m')
+
         
   # df_cash
   DF_CASH = final_df[final_df["CLASSE"]=="CASH"].copy()
@@ -184,15 +174,32 @@ def liberta_leasing_convert_handler(event, context):
   # final join
   summary_df = charges_payment_df.\
   merge(reversal_salary_df, on="Tran date", how="outer").\
-  merge(cash_transfert_df, on="Tran date", how="outer").\
+  merge(cash_transfert_df, on="Tran date", how="outer")
+
+
+  
+
+    # df_loan
+  try:
+        DF_LOAN = final_df[final_df["CLASSE"]=="LOAN"].copy()
+        DF_LOAN["Tran date"] = DF_LOAN["Tran date"].dt.strftime('%Y-%m')
+        DF_LOAN.columns =["CLASSE_LOAN", "Tran date", "TOTAL_LOAN"]
+        DF_LOAN.drop(["CLASSE_LOAN"], axis=1, inplace=True)
+  except:
+        summary_df["TOTAL_LOAN"] = 0
+  
+  summary_df.\
   merge(DF_LOAN, on="Tran date", how="outer")
   summary_df.fillna(0, inplace=True)
-  
+
   eps=1e-6
   summary_df["TOTAL_LOAN/TOTAL_SALARY"] = summary_df["TOTAL_LOAN"]/(summary_df["TOTAL_SALARY"]+eps)
   mean_salary = summary_df[summary_df["TOTAL_SALARY"] !=0]["TOTAL_SALARY"].mean()
   bracket_salary = create_salary_bracket(mean_salary)
   
+        
+        
+    
   
   return {'statusCode' : 200,
          'body': json.dumps({"beacker_salary":bracket_salary})
