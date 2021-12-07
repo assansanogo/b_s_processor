@@ -32,6 +32,36 @@ def create_salary_bracket(salary_dollars):
         bracket = "TOP_EARNER"
     return bracket
 
+def ETL_bank(raw_df, bank_name):
+    df_no_index = raw_df[[col for col in raw_df.columns if "Unnamed" not in col]]
+    
+    if bank_name == "STANDARD_CHARTERED_BANK":
+        df_no_index['Trans. Date'] = df_no_index["Date"]
+        df_no_index['Credits'] = df_no_index["Deposit"]
+        df_no_index['Debits'] =  df_no_index["Withdraw"]
+        df_no_index['Credits'].fillna(0, inplace=True)
+        df_no_index['Debits'].fillna(0, inplace=True)
+        
+    elif bank_name == "WEMA_BANK":
+        df_no_index['Trans. Date'] = df_no_index["Tran date"]
+        df_no_index['Credits'] = df_no_index["Deposit"]
+        df_no_index['Debits'] =  df_no_index["Withdrawal"]
+        df_no_index['Credits'].fillna(0, inplace=True)
+        df_no_index['Debits'].fillna(0, inplace=True)
+        df_no_index['Credits'] = df_no_index['Credits'].apply(lambda x: str(x))
+        df_no_index['Debits'] = df_no_index['Debits'].apply(lambda x: str(x))
+        
+    elif bank_name == "ACCESS_BANK":
+        df_no_index['Trans. Date'] = df_no_index["Posted date"]
+        df_no_index['Credits'] = df_no_index["Credit"]
+        df_no_index['Debits'] =  df_no_index["Debit"]
+        
+    elif bank_name == "UBA_BANK":
+        df_no_index['Trans. Date'] = df_no_index["TRANS DATE"]
+        df_no_index['Credits'] = df_no_index["CREDIT"]
+        df_no_index['Debits'] =  df_no_index["DEBIT"]
+    return df_no_index
+
 
 
 def try_convert(x):
@@ -61,6 +91,9 @@ def liberta_leasing_analyze_handler(event, context):
   
   col1 = "Withdrawal"
   col2 = "Deposit"
+        
+  df = pd.read_excel(url, sep=';')      
+  
   for c in cols:
       df[c]= df[c].astype('str').str.strip().str.replace(",","").str.replace("NaN","")
   
