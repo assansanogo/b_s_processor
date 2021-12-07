@@ -112,11 +112,17 @@ def liberta_leasing_convert_handler(event, context):
   final_df = pd.DataFrame(monthly_transactions).reset_index(inplace=True)
   
   # df_loan
-  DF_LOAN = final_df[final_df["CLASSE"]=="LOAN"].copy()
-  DF_LOAN["Tran date"] = DF_LOAN["Tran date"].dt.strftime('%Y-%m')
-  DF_LOAN.columns =["CLASSE_LOAN", "Tran date", "TOTAL_LOAN"]
-  DF_LOAN.drop(["CLASSE_LOAN"], axis=1, inplace=True)
-  
+  try:
+        DF_LOAN = final_df[final_df["CLASSE"]=="LOAN"].copy()
+        DF_LOAN["Tran date"] = DF_LOAN["Tran date"].dt.strftime('%Y-%m')
+        DF_LOAN.columns =["CLASSE_LOAN", "Tran date", "TOTAL_LOAN"]
+        DF_LOAN.drop(["CLASSE_LOAN"], axis=1, inplace=True)
+  except:
+        DF_LOAN = pd.DataFrame()
+        DF_LOAN["CLASSE_LOAN"] = None
+        DF_LOAN["TOTAL_LOAN"] = 0
+        DF_LOAN["Tran date"] = pd.to_datetime(None).dt.strftime('%Y-%m')
+        
   # df_cash
   DF_CASH = final_df[final_df["CLASSE"]=="CASH"].copy()
   DF_CASH["Tran date"] = DF_CASH["Tran date"].dt.strftime('%Y-%m')
