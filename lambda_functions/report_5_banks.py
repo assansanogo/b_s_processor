@@ -34,9 +34,6 @@ def create_salary_bracket(salary_dollars):
 
 
 
-
-
-
 def try_convert(x):
     try :
         if x != None:
@@ -46,20 +43,6 @@ def try_convert(x):
     except Exception as e:   
         x = 0
     return x
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -172,7 +155,5 @@ def liberta_leasing_analyze_handler(event, context):
   
   
   return {'statusCode' : 200,
-         'body': json.dumps({
-                 "tenure": "sans")
-                 })
+         'body': json.dumps({"beacker_salary":bracket_salary})
          }
