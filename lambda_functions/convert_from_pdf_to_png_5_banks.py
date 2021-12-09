@@ -69,6 +69,7 @@ def convert_from_pdf_2_png_handler(event, context):
     s3_client = boto3.client('s3')
     
     OUTPUT_BUCKET_NAME = 'liberta-leasing-ml'
+    OUTPUT_BUCKET_NAME = 'testpredicteev'
     OUTPUT_FILE_NAME = 'my_bank_statement_png.zip'
     
     response = s3_client.upload_file(f_path, OUTPUT_BUCKET_NAME, OUTPUT_FILE_NAME)
