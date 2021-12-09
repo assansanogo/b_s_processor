@@ -2,8 +2,8 @@
 FROM amazon/aws-lambda-python:3.9
 WORKDIR /home/ubuntu
 RUN yum clean all
-RUN yum update -y && yum install make curl wget sudo git gcc-c++ libgl1 libgl1-mesa-glx mesa-libGL ffmpeg libsm6 libxext6 -y
-RUN pip3 install tqdm pandas opencv-python glob2 boto3 requests zipfile38 PyPDF2 pdf2image poppler-utils requests zipfile38 openpyxl --target "${LAMBDA_TASK_ROOT}"
+RUN yum update -y && yum install make curl wget sudo git gcc-c++ libgl1 libgl1-mesa-glx mesa-libGL ffmpeg libsm6 libxext6 poppler-utils -y
+RUN pip3 install tqdm pandas opencv-python glob2 boto3 requests zipfile38 PyPDF2 pdf2image requests zipfile38 openpyxl --target "${LAMBDA_TASK_ROOT}"
 
 
 WORKDIR "${LAMBDA_TASK_ROOT}"
