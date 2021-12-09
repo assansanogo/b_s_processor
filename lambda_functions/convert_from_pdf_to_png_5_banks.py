@@ -72,14 +72,13 @@ def convert_from_pdf_2_png_handler(event, context):
     OUTPUT_BUCKET_NAME = 'testpredicteev'
     OUTPUT_FILE_NAME = 'my_bank_statement_png.zip'
     
-    response = s3_client.upload_file(f_path, OUTPUT_BUCKET_NAME, OUTPUT_FILE_NAME)
-    upload_details = s3_client.generate_presigned_url('get_object', Params={"Bucket":OUTPUT_BUCKET_NAME, "Key":OUTPUT_FILE_NAME}, ExpiresIn = 100)
-        
+
     
     try:
         # when no error :process and returns json
         dest_file = parse(f_path)
-        dest_file = str(upload_details)
+        response = s3_client.upload_file(dest_file, OUTPUT_BUCKET_NAME, OUTPUT_FILE_NAME)
+        dest_file = str(s3_client.generate_presigned_url('get_object', Params={"Bucket":OUTPUT_BUCKET_NAME, "Key":OUTPUT_FILE_NAME}, ExpiresIn = 100))
         return {'headers': {'Content-Type':'application/json'}, 
         'statusCode': 200,
         'body': json.dumps(dest_file)}
