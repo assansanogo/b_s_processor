@@ -78,7 +78,7 @@ def convert_from_pdf_2_png_handler(event, context):
     
     try:
         # when no error :process and returns json
-        #dest_file = parse(f_path)
+        dest_file = parse(f_path)
         dest_file = str(upload_details)
         return {'headers': {'Content-Type':'application/json'}, 
         'statusCode': 200,
