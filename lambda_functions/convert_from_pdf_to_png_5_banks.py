@@ -64,12 +64,13 @@ def convert_from_pdf_2_png_handler(event, context):
         
     input_file_url = event["url"]
     output_format = event["format"]
+    OUTPUT_BUCKET_NAME = event["out"]
     f_path = download_url(input_file_url)
     
     s3_client = boto3.client('s3')
     
-    OUTPUT_BUCKET_NAME = 'liberta-leasing-ml'
-    OUTPUT_BUCKET_NAME = 'testpredicteev'
+    #OUTPUT_BUCKET_NAME = 'liberta-leasing-ml'
+    #OUTPUT_BUCKET_NAME = 'testpredicteev'
     OUTPUT_FILE_NAME = 'my_bank_statement_png.zip'
     
 
