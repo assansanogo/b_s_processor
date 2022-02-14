@@ -15,7 +15,7 @@ RUN cd darknet/data \
 
 ENV BATCH_SIZE = 1
 ENV DATA_FILE = ./obj.data
-ENV OBJ_NAMES = ./obj.OBJ_NAMES
+ENV OBJ_NAMES = ./obj.names
 ENV MODEL_WEIGHTS = ./yolov4-csp_best.weights
 ENV MODEL_CFG = ./yolov4-csp_test.cfg
 
@@ -30,6 +30,11 @@ RUN cp "${LAMBDA_TASK_ROOT}"/darknet/*.py "${LAMBDA_TASK_ROOT}" \
 && git clone https://github.com/assansanogo/b_s_processor.git \
 && ls "${LAMBDA_TASK_ROOT}"/b_s_processor/lambda_functions \
 && cp  "${LAMBDA_TASK_ROOT}"/b_s_processor/lambda_functions/yolo_5_banks.py "${LAMBDA_TASK_ROOT}" \
+&& mkdir  "${LAMBDA_TASK_ROOT}"/cfg \
+&& mkdir  "${LAMBDA_TASK_ROOT}"/data 
+&& cp  ./yolov4-csp_test.cfg "${LAMBDA_TASK_ROOT}/cfg" \
+&& cp  ./obj.data "${LAMBDA_TASK_ROOT}/data"
+
 && ls "${LAMBDA_TASK_ROOT}"
 
 #CMD
