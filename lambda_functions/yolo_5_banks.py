@@ -20,7 +20,7 @@ import glob2
 
 
 BATCH_SIZE = 1
-DATA_FILE = "./cfg/obj.data"
+DATA_FILE = "./obj.data"
 DATA_NAME =  "./cfg/obj.names"
 DATA_WEIGHTS = "./cfg/yolov4-csp_best.weights"
 CONFIG_FILE = "./cfg/yolov4-csp_test.cfg"
