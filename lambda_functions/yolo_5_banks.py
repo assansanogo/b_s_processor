@@ -17,6 +17,7 @@ import sys
 
 
 sys.path.append(".")
+sys.path.append("./cfg")
 
 
 BATCH_SIZE = 1
