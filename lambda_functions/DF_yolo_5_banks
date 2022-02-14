@@ -22,14 +22,10 @@ ENV MODEL_CFG = ./yolov4-csp_test.cfg
 WORKDIR "${LAMBDA_TASK_ROOT}"/darknet
 RUN  cd qualify_test && wget https://liberta-leasing-ml.s3.eu-west-1.amazonaws.com/data/qualify_data/MR+Adefisoye+Hezekiah+STATEMENT_4.png
 
-#RUN git clone https://github.com/assansanogo/b_s_processor.git
-
-RUN cp "${LAMBDA_TASK_ROOT}"/darknet/*.py "${LAMBDA_TASK_ROOT}"
-RUN cp "${LAMBDA_TASK_ROOT}"/darknet/*.so "${LAMBDA_TASK_ROOT}"
-RUN cp "${LAMBDA_TASK_ROOT}"/darknet/data/obj.* "${LAMBDA_TASK_ROOT}"
-RUN cp "${LAMBDA_TASK_ROOT}"/darknet/data/yolov4-csp*.* "${LAMBDA_TASK_ROOT}"
-
-#RUN cp "${LAMBDA_TASK_ROOT}"/darknet/darknet ../darknet
+RUN cp "${LAMBDA_TASK_ROOT}"/darknet/*.py "${LAMBDA_TASK_ROOT}" \
+&& cp "${LAMBDA_TASK_ROOT}"/darknet/*.so "${LAMBDA_TASK_ROOT}" \
+&& cp "${LAMBDA_TASK_ROOT}"/darknet/data/obj.* "${LAMBDA_TASK_ROOT}" \
+&& cp "${LAMBDA_TASK_ROOT}"/darknet/data/yolov4-csp*.* "${LAMBDA_TASK_ROOT}"
 
 WORKDIR "${LAMBDA_TASK_ROOT}"
 RUN git clone https://github.com/assansanogo/b_s_processor.git
