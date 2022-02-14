@@ -292,7 +292,7 @@ def detect_LL(image_name=None):
     return(detections)
 
 
-def yolo_liberta_leasing_convert_handler(event, context):
+def yolo_liberta_leasing_convert_handler_old(event, context):
     '''
     formatting of the lambda handler to be compatible with by AWS
     '''
@@ -332,7 +332,45 @@ def yolo_liberta_leasing_convert_handler(event, context):
                 'statusCode': 400,
                 'body': json.dumps(str(e))}
                 
+def yolo_liberta_leasing_convert_handler(event, context):
+    '''
+    formatting of the lambda handler to be compatible with by AWS
+    '''
+    # information extracted from the event payload
+    #event = json.loads(base64.b64decode(event['body']).decode('utf-8'))
+    if "body" in list(event.keys()):
+        event = event["body"]
+    
+    input_file_url = event["url"]
+    output_format = event["format"]
+    out = event["output_file"]
+    
+    print(glob2.glob("./*"))
+    
+    # download file locally and keep the filename
+    f_names = download_url_jpg(input_file_url)
+    
+    try:
+        # when no error :process and returns json
+        s3_client = boto3.client('s3')
+        s3_client.create_bucket(Bucket = out)
 
+        processed_dataframe = detect_LL(f_name)
+        df = pd.DataFrame(processed_dataframe)
+        new_file_name = f_name.replace(".png",".csv")
+        object_name = new_file_name.split("/")[-1]
+        df.to_csv(new_file_name, sep=',')
+        s3_client.upload_file(new_file_name, out, object_name)
+            
+        return {'headers': {'Content-Type':'application/json'}, 
+                'statusCode': 200,
+                'body': json.dumps(processed_dataframe)}
+       
+    except Exception as e :
+        # in case of errors return a json with the error description
+        return {'headers': {'Content-Type':'application/json'}, 
+                'statusCode': 400,
+                'body': json.dumps(str(e))}
 
 def main():
     args = parser()
