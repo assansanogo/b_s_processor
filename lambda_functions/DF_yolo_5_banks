@@ -33,8 +33,10 @@ RUN cp "${LAMBDA_TASK_ROOT}"/darknet/*.py "${LAMBDA_TASK_ROOT}" \
 && mkdir  "${LAMBDA_TASK_ROOT}"/cfg \
 && mkdir  "${LAMBDA_TASK_ROOT}"/data 
 && cp  ./yolov4-csp_test.cfg "${LAMBDA_TASK_ROOT}"/cfg \
-&& cp  ./obj.data "${LAMBDA_TASK_ROOT}"/data
-
+&& cp  ./obj.data "${LAMBDA_TASK_ROOT}"/data \
+&& chmod 777 ./yolov4-csp_test.cfg \
+&& chmod 777 ./yolov4-csp_best.weights \
+&& chmod 777 ./obj.names \
 && ls "${LAMBDA_TASK_ROOT}"
 
 #CMD
