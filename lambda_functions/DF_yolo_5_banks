@@ -31,7 +31,7 @@ RUN cp "${LAMBDA_TASK_ROOT}"/darknet/*.py "${LAMBDA_TASK_ROOT}" \
 && ls "${LAMBDA_TASK_ROOT}"/b_s_processor/lambda_functions \
 && cp  "${LAMBDA_TASK_ROOT}"/b_s_processor/lambda_functions/yolo_5_banks.py "${LAMBDA_TASK_ROOT}" \
 && mkdir  "${LAMBDA_TASK_ROOT}"/cfg \
-&& mkdir  "${LAMBDA_TASK_ROOT}"/data 
+&& mkdir  "${LAMBDA_TASK_ROOT}"/data \
 && cp  ./yolov4-csp_test.cfg "${LAMBDA_TASK_ROOT}"/cfg \
 && cp  ./yolov4-csp_best.weights "${LAMBDA_TASK_ROOT}"/cfg \
 && cp  ./obj.data "${LAMBDA_TASK_ROOT}"/data \
