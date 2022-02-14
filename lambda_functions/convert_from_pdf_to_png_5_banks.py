@@ -79,7 +79,7 @@ def convert_from_pdf_2_png_handler(event, context):
         # when no error :process and returns json
         dest_file = parse(f_path)
         
-        s3_client.create_bucket(OUTPUT_BUCKET_NAME)
+        s3_client.create_bucket(Bucket=OUTPUT_BUCKET_NAME)
         response = s3_client.upload_file(dest_file, OUTPUT_BUCKET_NAME, OUTPUT_FILE_NAME)
         dest_file = str(s3_client.generate_presigned_url('get_object', Params={"Bucket":OUTPUT_BUCKET_NAME, "Key":OUTPUT_FILE_NAME}, ExpiresIn = 100))
         return {'headers': {'Content-Type':'application/json'}, 
