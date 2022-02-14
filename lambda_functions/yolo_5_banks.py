@@ -348,7 +348,7 @@ def yolo_liberta_leasing_convert_handler(event, context):
     print(glob2.glob("./*"))
     
     # download file locally and keep the filename
-    f_names = download_url_jpg(input_file_url)
+    f_name = download_url_jpg(input_file_url)
     
     try:
         # when no error :process and returns json
