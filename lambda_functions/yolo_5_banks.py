@@ -302,6 +302,8 @@ def yolo_liberta_leasing_convert_handler(event, context):
     output_format = event["format"]
     out = event["output_file"]
     
+    print(glob2.glob("./*"))
+    
     # download file locally and keep the filename
     f_names = download_url(input_file_url)
     
