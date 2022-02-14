@@ -1,4 +1,7 @@
 import argparse
+import sys
+sys.path.append(".")
+sys.path.append("./cfg")
 import os
 import glob
 import random
@@ -13,11 +16,7 @@ import pandas as pd
 import boto3
 from zipfile import ZipFile
 import glob2
-import sys
 
-
-sys.path.append(".")
-sys.path.append("./cfg")
 
 
 BATCH_SIZE = 1
@@ -68,7 +67,6 @@ def download_url(url):
         # extracting all the files
         print(zip.namelist())
         os.makedirs(f'/tmp/all_png/{file_name}', exist_ok=True)
-        os.chdir('/tmp/all_png')
 
         for file_zip in zip.namelist():
             zip.extract(file_zip, '/tmp/all_png')
