@@ -16,10 +16,10 @@ import glob2
 
 
 BATCH_SIZE = 1
-DATA_FILE = "./obj.data"
-DATA_NAME =  "./obj.names"
-DATA_WEIGHTS = "./yolov4-csp_best.weights"
-CONFIG_FILE = "./yolov4-csp_test.cfg"
+DATA_FILE = "obj.data"
+DATA_NAME =  "obj.names"
+DATA_WEIGHTS = "yolov4-csp_best.weights"
+CONFIG_FILE = "yolov4-csp_test.cfg"
 THRESH = 0.2
 
 
