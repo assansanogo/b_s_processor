@@ -25,9 +25,9 @@ CONFIG_FILE = "./yolov4-csp_test.cfg"
 THRESH = 0.2
 
 
-def download_url(url):
+def download_url_jpg(url):
     '''
-    utility function which downloads pdf to local environment
+    utility function which downloads jpg to local environment
     '''
     # data is going to be read as stream
     chunk_size=2000
@@ -39,6 +39,45 @@ def download_url(url):
         for chunk in r.iter_content(chunk_size):
             fd.write(chunk)
     return f'/tmp/{file_name}'
+
+def download_url(url):
+    '''
+    utility funcction which downloads zip to local environment
+    '''
+    # data is going to be read as stream
+    chunk_size=2000
+    r = requests.get(url, stream=True)
+    
+    # the pdf filename is extracted from the presigned url
+    file_name = [el for el in url.split("/") if (".zip" in el)][0]
+    os.makedirs('/tmp', exist_ok=True)
+    
+    # open a file to dump the stream in
+    print(r)
+    print(file_name)
+    
+    with open(f'/tmp/{file_name}', 'wb') as fd:
+        for chunk in r.iter_content(chunk_size):
+            fd.write(chunk)
+    print(os.stat(f'/tmp/{file_name}').st_size)
+    
+    with ZipFile(f'/tmp/{file_name}', 'r') as zip:
+        # extracting all the files
+        print(zip.namelist())
+        os.makedirs(f'/tmp/all_png/{file_name}', exist_ok=True)
+        os.chdir('/tmp/all_png')
+
+        for file_zip in zip.namelist():
+            zip.extract(file_zip, '/tmp/all_png')
+            print('Extracting all the files now...')
+        print("double nested :\n")
+        print(glob2.glob('/tmp/all_png/*/*.png'))
+        
+    return glob2.glob('/tmp/all_png/*/*.png')
+
+
+
+
 
 def parser():
     parser = argparse.ArgumentParser(description="YOLO Object Detection")
@@ -263,13 +302,23 @@ def yolo_liberta_leasing_convert_handler(event, context):
     
     input_file_url = event["url"]
     output_format = event["format"]
+    out = event["output_file"]
     
     # download file locally and keep the filename
-    f_name = download_url(input_file_url)
+    f_names = download_url(input_file_url)
     
     try:
         # when no error :process and returns json
-        processed_dataframe = detect_LL(f_name)
+        s3_client = boto3.client('s3')
+        s3_client.create_bucket(Bucket = out)
+        for f_name in f_names:
+            processed_dataframe = detect_LL(f_name)
+            df = pd.DataFrame(processed_dataframe)
+            new_file_name = f_name.replace(".png",".csv")
+            object_name = new_file_name.split("/")[-1]
+            df.to_csv(new_file_name, sep=',')
+            s3_client.upload_file(new_file_name, out, object_name)
+            
         return {'headers': {'Content-Type':'application/json'}, 
                 'statusCode': 200,
                 'body': json.dumps(processed_dataframe)}
