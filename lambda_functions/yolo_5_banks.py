@@ -13,6 +13,10 @@ import pandas as pd
 import boto3
 from zipfile import ZipFile
 import glob2
+import sys
+
+
+sys.path.append(".")
 
 
 BATCH_SIZE = 1
