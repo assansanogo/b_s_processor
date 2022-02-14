@@ -129,7 +129,7 @@ def generate_table_csv(table_result, blocks_map, table_index):
         csv += '\n'
     return csv
 
-def png_2_csv(file_name):
+def png_2_csv(file_name, out):
     table_csv_list = get_table_csv_results(file_name)
 
     # replace content
@@ -143,7 +143,7 @@ def png_2_csv(file_name):
         
         try:
             object_name = f"job_{file_name.split("/")[-1].replace(".","_")}/{new_file_name.split("/")[-1]}"
-            bucket = "liberta-leasing-ml"
+            bucket = out
             response = s3_client.upload_file(new_file_name, bucket, object_name)
             result = object_name
 
@@ -154,11 +154,11 @@ def png_2_csv(file_name):
             pass
     return result
             
-def parse(f_path):
+def parse(f_path,out):
     all_files = glob2.glob(os.path.join(f_path, "*/*.png"))
     paths = []
     for file_name in tqdm(all_files):
-        paths.append(png_2_csv(file_name))
+        paths.append(png_2_csv(file_name,out))
         
     return paths
 
@@ -169,12 +169,13 @@ def png2csv_liberta_leasing_convert_handler(event, context):
         
     input_file_url = event["url"]
     output_format = event["format"]
+    output_bucket= event["output_bucket"]
     f_path = download_url(input_file_url)
 
     try:
         # when no error :process and returns json
 
-        dest_file = parse(f_path)
+        dest_file = parse(f_path, out=output_bucket)
         return {'headers': {'Content-Type':'application/json'}, 
         'statusCode': 200,
         'body': json.dumps(str(dest_file))}
