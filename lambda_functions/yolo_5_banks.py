@@ -2,7 +2,6 @@ import argparse
 import os
 import glob
 import random
-import darknet
 import time
 import cv2
 import numpy as np
@@ -10,7 +9,10 @@ import darknet
 import requests
 import json
 import base64
-import pandas
+import pandas as pd
+import boto3
+from zipfile import ZipFile
+import glob2
 
 
 BATCH_SIZE = 1
@@ -370,6 +372,6 @@ if __name__ == "__main__":
     # unconmment next line for an example of batch processing
     # batch_detection_example()
 
-    #image_name = "./qualify_test/MR+Adefisoye+Hezekiah+STATEMENT_3.png"
+    image_name = "./qualify_test/MR+Adefisoye+Hezekiah+STATEMENT_3.png"
     preds = detect_LL(image_name)
     print(preds)
