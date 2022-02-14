@@ -10,12 +10,8 @@ import darknet
 import requests
 import json
 import base64
+import pandas
 
-#BATCH_SIZE = os.environ['BATCH_SIZE']
-#DATA_FILE = os.environ['DATA_FILE']
-#DATA_WEIGHTS = os.environ['DATA_WEIGHTS']
-#CONFIG_FILE = os.environ['CONFIG_FILE']
-#THRESH = os.environ['THRESH']
 
 BATCH_SIZE = 1
 DATA_FILE = "./obj.data"
