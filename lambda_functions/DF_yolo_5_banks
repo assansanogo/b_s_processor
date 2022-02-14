@@ -38,4 +38,4 @@ RUN cp  "${LAMBDA_TASK_ROOT}"/b_s_processor/lambda_functions/yolo_5_banks.py "${
 RUN ls "${LAMBDA_TASK_ROOT}"
 
 #CMD
-CMD ["darknet_LL.yolo_liberta_leasing_convert_handler"]
+CMD ["DF_yolo_5_banks.yolo_liberta_leasing_convert_handler"]
