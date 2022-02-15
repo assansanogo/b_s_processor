@@ -47,8 +47,16 @@ def download_url(url):
         
         
     print(os.getcwd())
+    #level1
     print(glob2.glob(os.getcwd()+'/*'))
+    #level2
     print(glob2.glob('/tmp/all_csv/*'))
+    #level3
+    print(glob2.glob('/tmp/all_csv/*/*'))
+    #level4
+    print(glob2.glob('/tmp/all_csv/*/*/*'))
+    print("****")
+    
     file_path = file_name.replace(".zip","")
     print(glob2.glob(f'/tmp/all_csv/{file_path}/*'))
         
