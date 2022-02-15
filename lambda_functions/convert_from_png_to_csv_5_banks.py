@@ -139,7 +139,7 @@ def png_2_csv(file_name, out):
         with open(new_file_name, "wt") as fout:
             fout.write(table_csv)
     
-        s3_client = boto3.client('s3')
+        s3_client = boto3.client('s3', region_name='eu-west-1')
         
         try:
             
@@ -177,7 +177,7 @@ def png2csv_liberta_leasing_convert_handler(event, context):
 
     try:
         # when no error :process and returns json
-        s3_client = boto3.client('s3')
+        s3_client = boto3.client('s3', region_name='eu-west-1')
         #s3_client.create_bucket(Bucket=output_bucket,
         # CreateBucketConfiguration={'LocationConstraint': 'eu-west-1'})
         
