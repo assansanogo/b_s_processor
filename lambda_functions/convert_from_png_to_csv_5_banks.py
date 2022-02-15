@@ -91,7 +91,7 @@ def get_table_csv_results(file_name):
 
     # process using image bytes
     # get the results
-    client = boto3.client('textract')
+    client = boto3.client('textract',region_name="eu-west-1")
 
     response = client.analyze_document(Document={'Bytes': bytes_test}, FeatureTypes=['TABLES'])
 
