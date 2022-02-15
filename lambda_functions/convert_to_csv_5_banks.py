@@ -11,6 +11,7 @@ import json
 import base64
 from zipfile import ZipFile
 import os
+import boto3
 
 
 def download_url(url):
@@ -87,7 +88,7 @@ def guess_header(all_csv):
         except Exception as e:
             print(e)
             pass
-
+    # look through the first 100 lines
     mitsuketa = False
 
     for el in filtered_csv[:100]:
@@ -283,6 +284,7 @@ def liberta_leasing_convert_handler(event, context):
                            
     zip_url = event["url"]
     bank_format = event["format"]
+    out_bucket = event["out"]
     
     
     # download file locally and extract a zip
@@ -293,6 +295,19 @@ def liberta_leasing_convert_handler(event, context):
         # when no error :process and returns json
         #processed_dataframe = process_bank_statements(f_name, bank_format)
         output_file = process_csv(f_path, bank_format)
+        
+        final_excel = f'{f_path}/final_parsed.xlsx'
+        out_name = 'final_parsed.xlsx'
+        s3_client = boto3.client('s3', region_name='eu-west-1')
+        
+        try:
+            s3_client.create_bucket(Bucket=out_bucket)
+        except:
+            pass
+
+        response = s3_client.upload_file( final_excel , out_bucket, out_name)
+        
+        
         return {'headers': {'Content-Type':'application/json'}, 
                 'statusCode': 200,
                 'body': json.dumps(output_file.to_string())}
@@ -302,4 +317,3 @@ def liberta_leasing_convert_handler(event, context):
         return {'headers': {'Content-Type':'application/json'}, 
                 'statusCode': 400,
                 'body': json.dumps(str(e))}
-                
