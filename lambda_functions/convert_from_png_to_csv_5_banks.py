@@ -137,12 +137,6 @@ def png_2_csv(file_name, out):
         print(idx)
         new_file_name = file_name.replace(".png", f"sub_{str(idx)}.csv")
         
-        zipObj = ZipFile('/tmp/sample.zip', 'a')
-        zipObj.write(new_file_name)
-        zipObj.close()
-        
-        
-        
         with open(new_file_name, "wt") as fout:
             fout.write(table_csv)
     
@@ -155,6 +149,9 @@ def png_2_csv(file_name, out):
             object_name = f"job_{radical_name}/{suffix}"
             bucket = out
             response = s3_client.upload_file(new_file_name, bucket, object_name)
+            zipObj = ZipFile('/tmp/sample.zip', 'a')
+            zipObj.write(new_file_name)
+            zipObj.close()
             result = object_name
 
         except Exception as e:
