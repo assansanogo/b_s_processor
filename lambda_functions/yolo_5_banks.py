@@ -366,6 +366,7 @@ def yolo_liberta_leasing_convert_handler(event, context):
         h = processed_dataframe[2][3]
         
         df = pd.DataFrame([[classe, prob, xc, yc, w, h]])
+        print(df)
         new_file_name = f_name.replace(".png",".csv")
         object_name = new_file_name.split("/")[-1]
         df.to_csv(new_file_name, sep=';')
