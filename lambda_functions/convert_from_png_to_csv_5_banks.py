@@ -178,7 +178,7 @@ def png2csv_liberta_leasing_convert_handler(event, context):
     try:
         # when no error :process and returns json
         s3_client = boto3.client('s3')
-        s3_client.create_bucket(Bucket=out)
+        s3_client.create_bucket(Bucket=output_bucket)
         dest_file = parse(f_path, out=output_bucket)
         return {'headers': {'Content-Type':'application/json'}, 
         'statusCode': 200,
