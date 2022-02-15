@@ -360,6 +360,7 @@ def yolo_liberta_leasing_convert_handler(event, context):
             print(e," (the bucket already exists)")
 
         processed_dataframe = detect_LL(f_name)
+        print(processed_dataframe)
         
         classe = processed_dataframe[0]
         prob = processed_dataframe[1]
