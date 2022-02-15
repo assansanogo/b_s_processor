@@ -49,14 +49,18 @@ def download_url(url):
         
         
     l_files = []
-    for (root,dirs,files) in os.walk('/tmp/all_csv', topdown=True):
-        for fi in files:
-            if (fi not in l_files) and (fi.endswith("csv")):
-                l_files.append(fi)
+    # we don't know the files depth
+    all_files = glob2.glob('/tmp/all_csv/*.csv') + \
+    glob2.glob('/tmp/all_csv/*/*.csv') + \
+    glob2.glob('/tmp/all_csv/*/*/*.csv') + \
+    glob2.glob('/tmp/all_csv/*/*/*/*.csv') + \
+    glob2.glob('/tmp/all_csv/*/*/*/*/*.csv')
+    
+    
+    l_files = [fi for fi in all_files if (fi.endswith("csv"))]
     print(l_files)
     
-    #level4
-    retrieve_path = os.path.join('/tmp/all_csv',l_files[0])
+    retrieve_path = l_files[0]
     full_csv_path =  ("/").join(retrieve_path.split("/")[:-1])
     return full_csv_path
 
