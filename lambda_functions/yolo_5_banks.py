@@ -343,7 +343,7 @@ def yolo_liberta_leasing_convert_handler(event, context):
     
     input_file_url = event["url"]
     output_format = event["format"]
-    out = event["output_file"]
+    out = event["out"]
     
     print(glob2.glob("./*"))
     
@@ -352,14 +352,22 @@ def yolo_liberta_leasing_convert_handler(event, context):
     
     try:
         # when no error :process and returns json
-        s3_client = boto3.client('s3')
+        s3_client = boto3.client('s3', region_name= "eu-west-1")
         s3_client.create_bucket(Bucket = out)
 
         processed_dataframe = detect_LL(f_name)
-        df = pd.DataFrame(processed_dataframe)
+        
+        classe = processed_dataframe[0]
+        prob = processed_dataframe[1]
+        xc = processed_dataframe[2][0]
+        yc = processed_dataframe[2][1]
+        w = processed_dataframe[2][2]
+        h = processed_dataframe[2][3]
+        
+        df = pd.DataFrame([[classe, prob, xc, yc, w, h]])
         new_file_name = f_name.replace(".png",".csv")
         object_name = new_file_name.split("/")[-1]
-        df.to_csv(new_file_name, sep=',')
+        df.to_csv(new_file_name, sep=';')
         s3_client.upload_file(new_file_name, out, object_name)
             
         return {'headers': {'Content-Type':'application/json'}, 
