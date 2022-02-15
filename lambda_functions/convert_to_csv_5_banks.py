@@ -25,18 +25,20 @@ def download_url(url):
     
     os.makedirs('/tmp', exist_ok=True)
     # open a file to dump the stream in
+    # print whether the request worked or not 
     print(r)
-    
+    # check the filename we are dumping contents in 
     print(file_name)
     
     with open(f'/tmp/{file_name}', 'wb') as fd:
-        
         for chunk in r.iter_content(chunk_size):
             fd.write(chunk)
     print(os.stat(f'/tmp/{file_name}').st_size)
     
+    # compression
     with ZipFile(f'/tmp/{file_name}', 'r') as zip:
         # extracting all the files
+        print("the files inside the zip are identified by:)
         print(zip.namelist())
         os.makedirs(f'/tmp/all_csv', exist_ok=True)
         os.chdir('/tmp/all_csv')
@@ -57,9 +59,11 @@ def download_url(url):
     glob2.glob('/tmp/all_csv/*/*/*/*/*.csv')
     
     
+    # list the path of csv files (they are stored "at teh same level"
     l_files = [fi for fi in all_files if (fi.endswith("csv"))]
     print(l_files)
     
+    #trick to automatically find the folder of interest
     retrieve_path = l_files[0]
     full_csv_path =  ("/").join(retrieve_path.split("/")[:-1])
     return full_csv_path
@@ -67,7 +71,9 @@ def download_url(url):
 
 def guess_header(all_csv):
     
-    
+    # function which guess the header based on the file content
+              
+              
     header_types = get_info() 
     filtered_csv = []
     for el in all_csv:
@@ -190,25 +196,26 @@ def process_csv(input_folder, bank_name=None):
     l_csv = glob2.glob(files_csv)
     l_csv = sorted(l_csv)
     
-    #print sorted files to start the consolidation
-    print(l_csv)
+    # print sorted files to start the consolidation
+    # print(l_csv)
     
     data_csv = []
     len_csv = []
 
     for i in range(len(l_csv)):
         with open(l_csv[i]) as f:
+              
+            # the files are read as a list of lines -which will be parsed
             datum = (f.readlines()) 
-            print(datum)
+            # print(datum)
             if bank_name in ["UBA_BANK","STANDARD_CHARTERED_BANK", "WEMA_BANK"]:
                 datum = [el.replace(",,"," , , ") for el in datum]
             datum_values = [el.split(" ,") for el in datum if (not "Balance B/F." in el and not "Opening Balance" in el and not 'Closing Balance' in el and not "Total" in el)]
 
-
             datum_values = [[sub_el for sub_el in el if sub_el != '\n'] for el in datum_values]
             
-            print("#csv contents")
-            print(datum_values)
+            # print("#csv contents")
+            # print(datum_values)
             
             
             for idx, el in enumerate(datum_values):
