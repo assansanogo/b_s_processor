@@ -44,7 +44,7 @@ def download_url_jpg(url):
 
 def download_url(url):
     '''
-    utility funcction which downloads zip to local environment
+    utility function which downloads zip to local environment
     '''
     # data is going to be read as stream
     chunk_size=2000
@@ -295,6 +295,7 @@ def detect_LL(image_name=None):
 def yolo_liberta_leasing_convert_handler_old(event, context):
     '''
     formatting of the lambda handler to be compatible with by AWS
+    fonction whichis too long
     '''
     # information extracted from the event payload
     #event = json.loads(base64.b64decode(event['body']).decode('utf-8'))
