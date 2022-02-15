@@ -30,15 +30,16 @@ def download_url(url):
     # check the filename we are dumping contents in 
     print(file_name)
     
+    # open the temp filename to store the contents (zip file)
     with open(f'/tmp/{file_name}', 'wb') as fd:
         for chunk in r.iter_content(chunk_size):
             fd.write(chunk)
     print(os.stat(f'/tmp/{file_name}').st_size)
     
-    # compression
+    # decompression, open zip file
     with ZipFile(f'/tmp/{file_name}', 'r') as zip:
         # extracting all the files
-        print("the files inside the zip are identified by:)
+        print("the files inside the zip are identified by:")
         print(zip.namelist())
         os.makedirs(f'/tmp/all_csv', exist_ok=True)
         os.chdir('/tmp/all_csv')
@@ -78,10 +79,11 @@ def guess_header(all_csv):
     filtered_csv = []
     for el in all_csv:
         try:
-            cols = list(pd.read_csv(el, error_bad_lines=False).columns)
+            cols = list(pd.read_csv(el, on_bad_lines=False).columns)
             cols = [col.strip() for col in cols if "Unnamed" not in col]
             filtered_csv.append(cols)
-        except:
+        except Exception as e:
+            print(e)
             pass
 
     mitsuketa = False
