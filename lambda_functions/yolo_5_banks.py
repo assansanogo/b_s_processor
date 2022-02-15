@@ -359,9 +359,12 @@ def yolo_liberta_leasing_convert_handler(event, context):
         except Exception as e:   
             print(e," (the bucket already exists)")
 
-        processed_dataframe = detect_LL(f_name)
+        # after detection yolo outputs a list of tuple
+        # since we do only 1 detection at a time
+        processed_dataframe = detect_LL(f_name)[0]
         print(processed_dataframe)
         
+        # classe, probabilité et noarmalized coordinates
         classe = processed_dataframe[0]
         prob = processed_dataframe[1]
         xc = processed_dataframe[2][0]
