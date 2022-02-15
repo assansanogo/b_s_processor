@@ -142,7 +142,10 @@ def png_2_csv(file_name, out):
         s3_client = boto3.client('s3')
         
         try:
-            object_name = f"job_{file_name.split("/")[-1].replace(".","_")}/{new_file_name.split("/")[-1]}"
+            
+            radical_name = file_name.split("/")[-1].replace(".","_")
+            suffix = new_file_name.split("/")[-1]
+            object_name = f"job_{radical_name}/{suffix}"
             bucket = out
             response = s3_client.upload_file(new_file_name, bucket, object_name)
             result = object_name
