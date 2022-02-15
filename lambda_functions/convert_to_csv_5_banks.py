@@ -53,11 +53,11 @@ def download_url(url):
         for fi in files:
             if (fi not in l_files) and (fi.enswith("csv")):
                 l_files.append(fi)
-        
+    print(l_files)
     
     #level4
     full_csv_path =  ("/").join(l_files.split("/")[:-1])
-    return f'/tmp/all_csv/{file_path}'
+    return full_csv_path
 
 
 def guess_header(all_csv):
