@@ -49,7 +49,7 @@ def download_url(url):
         
         
     l_files = []
-    for (root,dirs,files) in os.walk('/tmp/all_csv', topdown=true):
+    for (root,dirs,files) in os.walk('/tmp/all_csv', topdown=True):
         for fi in files:
             if (fi not in l_files) and (fi.enswith("csv")):
                 l_files.append(fi)
