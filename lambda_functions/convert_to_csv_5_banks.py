@@ -56,7 +56,7 @@ def download_url(url):
     print(l_files)
     
     #level4
-    full_csv_path =  ("/").join(l_files.split("/")[:-1])
+    full_csv_path =  ("/").join(l_files[0].split("/")[:-1])
     return full_csv_path
 
 
