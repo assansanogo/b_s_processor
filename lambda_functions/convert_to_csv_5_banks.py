@@ -77,9 +77,11 @@ def guess_header(all_csv):
               
     header_types = get_info() 
     filtered_csv = []
+    dataframe_header = None
+    
     for el in all_csv:
         try:
-            cols = list(pd.read_csv(el, on_bad_lines=False).columns)
+            cols = list(pd.read_csv(el, on_bad_lines="skip").columns)
             cols = [col.strip() for col in cols if "Unnamed" not in col]
             filtered_csv.append(cols)
         except Exception as e:
