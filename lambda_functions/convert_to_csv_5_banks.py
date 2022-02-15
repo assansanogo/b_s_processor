@@ -51,12 +51,13 @@ def download_url(url):
     l_files = []
     for (root,dirs,files) in os.walk('/tmp/all_csv', topdown=True):
         for fi in files:
-            if (fi not in l_files) and (fi.endswith("csv")):
+            if (fi not in files) and (fi.endswith("csv")):
                 l_files.append(fi)
     print(l_files)
     
     #level4
-    full_csv_path =  ("/").join(l_files[0].split("/")[:-1])
+    retrieve_path = os.path.join('/tmp/all_csv',l_files[0])
+    full_csv_path =  ("/").join(retrieve_path.split("/")[:-1])
     return full_csv_path
 
 
