@@ -38,7 +38,7 @@ def download_url(url):
     with ZipFile(f'/tmp/{file_name}', 'r') as zip:
         # extracting all the files
         print(zip.namelist())
-        #os.makedirs(f'/tmp/all_csv/{file_name}', exist_ok=True)
+        os.makedirs(f'/tmp/all_csv', exist_ok=True)
         os.chdir('/tmp/all_csv')
         
         for file_zip in zip.namelist():
