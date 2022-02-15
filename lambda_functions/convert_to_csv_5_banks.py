@@ -187,7 +187,11 @@ def process_csv(input_folder, bank_name=None):
 
 
             datum_values = [[sub_el for sub_el in el if sub_el != '\n'] for el in datum_values]
-
+            
+            print("#csv contents")
+            print(datum_values)
+            
+            
             for idx, el in enumerate(datum_values):
                 if idx >0:
                     try:
