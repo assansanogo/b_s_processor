@@ -136,6 +136,13 @@ def png_2_csv(file_name, out):
     for idx, table_csv in enumerate(table_csv_list):
         print(idx)
         new_file_name = file_name.replace(".png", f"sub_{str(idx)}.csv")
+        
+        zipObj = ZipFile('/tmp/sample.zip', 'a')
+        zipObj.write(new_file_name)
+        zipObj.close()
+        
+        
+        
         with open(new_file_name, "wt") as fout:
             fout.write(table_csv)
     
@@ -178,9 +185,17 @@ def png2csv_liberta_leasing_convert_handler(event, context):
     try:
         # when no error :process and returns json
         s3_client = boto3.client('s3', region_name='eu-west-1')
-        s3_client.create_bucket(Bucket=output_bucket)
+        try:
+            s3_client.create_bucket(Bucket=output_bucket)
+         except:
+            pass
         
         dest_file = parse(f_path, out=output_bucket)
+        
+        s3_client = boto3.client('s3', region_name='eu-west-1')
+        response = s3_client.upload_file("/tmp/sample.zip", output_bucket, "compressed_csv.zip")
+        
+        
         return {'headers': {'Content-Type':'application/json'}, 
         'statusCode': 200,
         'body': json.dumps(str(dest_file))}
