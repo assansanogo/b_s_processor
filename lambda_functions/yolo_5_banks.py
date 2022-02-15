@@ -354,7 +354,7 @@ def yolo_liberta_leasing_convert_handler(event, context):
     try:
         # when no error :process and returns json
         s3_client = boto3.client('s3', region_name= "eu-west-1")
-        s3_client.create_bucket(Bucket = out)
+        s3_client.create_bucket(Bucket = out, CreateBucketConfiguration={'LocationConstraint': 'eu-west-1'})
 
         processed_dataframe = detect_LL(f_name)
         
