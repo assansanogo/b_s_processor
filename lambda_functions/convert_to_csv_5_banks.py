@@ -22,9 +22,11 @@ def download_url(url):
     r = requests.get(url, stream=True)
     # the pdf filename is extracted from the presigned url
     file_name = [el for el in url.split("/") if (".zip" in el)][0]
+    
     os.makedirs('/tmp', exist_ok=True)
     # open a file to dump the stream in
     print(r)
+    
     print(file_name)
     
     with open(f'/tmp/{file_name}', 'wb') as fd:
@@ -36,7 +38,7 @@ def download_url(url):
     with ZipFile(f'/tmp/{file_name}', 'r') as zip:
         # extracting all the files
         print(zip.namelist())
-        os.makedirs(f'/tmp/all_csv/{file_name}', exist_ok=True)
+        #os.makedirs(f'/tmp/all_csv/{file_name}', exist_ok=True)
         os.chdir('/tmp/all_csv')
         
         for file_zip in zip.namelist():
@@ -46,16 +48,15 @@ def download_url(url):
         
         
         
-    print(file_name})
-
-    #level4
-    print(glob2.glob('/tmp/all_csv/*/*/*/*'))
-    print(glob2.glob('/tmp/all_csv/*/*/*/*/*'))
-    print("****")
-    
-    file_path = file_name.replace(".zip","")
-    print(glob2.glob(f'/tmp/all_csv/{file_path}/*'))
+    l_files = []
+    for (root,dirs,files) in os.walk('/tmp/all_csv', topdown=true):
+        for fi in files:
+            if (fi not in l_files) and (fi.enswith("csv")):
+                l_files.append(fi)
         
+    
+    #level4
+    full_csv_path =  ("/").join(l_files.split("/")[:-1])
     return f'/tmp/all_csv/{file_path}'
 
 
