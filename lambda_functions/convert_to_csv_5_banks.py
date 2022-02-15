@@ -174,11 +174,20 @@ def check_out_path(target_path, my_dir='', selected_ext ='png'):
 
 
 def process_csv(input_folder, bank_name=None):
-    files_csv = f'{input_folder}/*.csv'
     
+    
+    #definition of the output file
     file_dest = f'{input_folder}/final_parsed.xlsx'
+    
+    #csv regex
+    files_csv = f'{input_folder}/*.csv'
+    #list of files + sort
     l_csv = glob2.glob(files_csv)
     l_csv = sorted(l_csv)
+    
+    #print sorted files to start the consolidation
+    print(l_csv)
+    
     data_csv = []
     len_csv = []
 
