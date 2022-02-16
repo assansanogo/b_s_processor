@@ -56,8 +56,8 @@ def classify_liberta_leasing_convert_handler(event, context):
     if 'body' in list(event.keys()):
         event = json.loads(event['body'])
     
-    OUTPUT_FILE_NAME = os.environ["output_file_name"]
-    OUTPUT_BUCKET_NAME = os.environ["output_bucket_name"]
+    OUTPUT_FILE_NAME = event["output_file_name"]
+    OUTPUT_BUCKET_NAME = event["output_bucket_name"]
     input_file_url = event["url"]
     output_format = event["format"]
     model_Doc2Vec_path = event["model_Doc2Vec_path"]
