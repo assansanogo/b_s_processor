@@ -145,7 +145,7 @@ def classify_liberta_leasing_convert_handler(event, context):
         
         # process the "Vect_D2V"
         to_pred = pd.DataFrame(list([list(el) for el in res_doc2vec["Vect_D2V"].values]))
-        vect_data = pd.concat([res_doc2vec[additional_columns], to_pred], axis=1).fillna(0)
+        vect_data = pd.concat([res_doc2vec[additional_columns].fillna(0), to_pred], axis=1)
         
         # store in both columns data (predictions + bank_id)
         dataframe_file["PREDICTION"] = loaded_model.predict(vect_data)
@@ -153,7 +153,7 @@ def classify_liberta_leasing_convert_handler(event, context):
         
         # create a boto3 client
         s3_client = boto3.client('s3', region_name='eu_west-1')
-        location = {'LocationConstraint':'eu_west-1'}
+        location = {'LocationConstraint':'eu-west-1'}
         s3_client.create_bucket(Bucket=OUTPUT_BUCKET_NAME, CreateBucketConfiguration=location)
         
         # save file locally
