@@ -139,8 +139,9 @@ def classify_liberta_leasing_convert_handler(event, context):
         additional_columns = ["Debit","Credit"]
         # replace special characters in Debit & Credit column
         for col in ["Debit","Credit"]:
-            res_doc2vec[col] = res_doc2vec[col].str.replace(",|-","")
+            res_doc2vec[col] = res_doc2vec[col].str.replace(",|-","").fillna("0")
             res_doc2vec[col] = res_doc2vec[col].str.replace("","0").astype('float')
+            
         
         # process the "Vect_D2V"
         to_pred = pd.DataFrame(list([list(el) for el in res_doc2vec["Vect_D2V"].values]))
