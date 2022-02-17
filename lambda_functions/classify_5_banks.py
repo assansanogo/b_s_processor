@@ -152,7 +152,7 @@ def classify_liberta_leasing_convert_handler(event, context):
         dataframe_file["BANK_ID"] = output_format
         
         # create a boto3 client
-        s3_client = boto3.client('s3', region_name='e-west-1')
+        s3_client = boto3.client('s3', region_name='eu-west-1')
         location = {'LocationConstraint':'eu-west-1'}
         s3_client.create_bucket(Bucket=OUTPUT_BUCKET_NAME, CreateBucketConfiguration=location)
         
