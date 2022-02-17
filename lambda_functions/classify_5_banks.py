@@ -1,7 +1,6 @@
 import os
 import json
 import shutil
-
 import boto3
 import io
 from io import BytesIO
@@ -15,6 +14,9 @@ from tqdm import tqdm
 import gensim
 import joblib
 import pandas as pd
+from gensim.models.doc2vec import Doc2Vec, TaggedDocument
+
+import numpy as np
 
 
 def download_url(url, ext):
@@ -47,6 +49,40 @@ def import_model(model_path):
 
 
   # problem with pngs
+    
+    
+def simple_preprocess(df, col_name):
+    """
+    simple data preprocessing step for NLP embeddings
+    """
+    df[col_name] = df[col_name].str.replace("/"," ")
+    df_new = df.copy()
+    temp_df = df_new[col_name].str.extractall(r'([a-zA-Z]+)')
+    df_new.loc[:, col_name]  = temp_df.groupby(level=0).apply(lambda x: (' ').join(x[0].values).upper()).copy()
+    return df_new
+
+def doc2vec_transformer(x, model):
+    ''' returns doc2vec embedding(sentence-based)''' 
+    return model.infer_vector(x)
+
+
+def doc_2_vec_transformer(df, col_name="Description", model_d2vec=None):
+    df['Vect_D2V'] = df[col_name].apply(lambda x : doc2vec_transformer(str(x).split(" "), model_d2vec))
+    return df
+
+
+def define_model_keys(model):
+    '''returns  the lookup dictionary following the structure: {key : vector}
+    ''' 
+    
+    my_dict = {}
+    for k in model.wv.key_to_index.keys():
+        my_dict[k] = model.wv.get_vector(key=k)
+    return my_dict
+    
+    
+    
+    
   
 def classify_liberta_leasing_convert_handler(event, context):
     '''
@@ -63,10 +99,13 @@ def classify_liberta_leasing_convert_handler(event, context):
     model_Doc2Vec_path = event["model_Doc2Vec_path"]
     model_NLP_path = event["model_NLP_path"]
     
-    local_model_Doc2Vec_path = download_url(model_Doc2Vec_path, "model")
+    # download models (doc2vec) from their respective urls
+    
+    local_model_Doc2Vec_path = download_url(model_Doc2Vec_path, "other_gensim_doc_2_vec.model")
     model_Doc2Vec = import_model(local_model_Doc2Vec_path) 
     
-    local_model_NLP_path = download_url(model_NLP_path,"pkl")
+    # download models (classifier) from their respective urls
+    local_model_NLP_path = download_url(model_NLP_path,"other_model_classifier.pkl")
     model_NLP = joblib.load(local_model_NLP_path)
     
     f_path = download_url(input_file_url, "xlsx")
@@ -83,13 +122,40 @@ def classify_liberta_leasing_convert_handler(event, context):
                          "POLARIS_BANK":"Details",
                          "ACCESS_BANK":"Description"}
         
-        column_name = bank_columns[output_format]        
-            
-        dataframe_file["Narration_Vectorized"] = dataframe_file[column_name].apply(lambda x: model_Doc2Vec.infer_vector(x.split(" ")))
-        dataframe_file["CLASSE"] = dataframe_file["Narration_Vectorized"].apply(lambda x : model_NLP.predict(x.reshape(1, -1))[0])
+        # define the column name based on the bank type
+        column_name = bank_columns[output_format]  
+        
+        # we load the downloaded model_path
+        model_doc2vec = Doc2Vec.load("/tmp/other_gensim_doc_2_vec.model")
+        
+        #transform the description column
+        res_doc2vec = doc_2_vec_transformer(dataframe_file, 
+                                    col_name="Description", 
+                                    model_d2vec=model_doc2vec).reset_index(drop=True)
+        
+        # load the model
+        sklearn_model_filename = '/tmp/other_model_classifier.pkl'
+        loaded_model = joblib.load(sklearn_model_filename)
+        additional_columns = ["Debit","Credit"]
+        # replace special characters in Debit & Credit column
+        for col in ["Debit","Credit"]:
+            res_doc2vec[col] = res_doc2vec[col].str.replace(",|-","")
+            res_doc2vec[col] = res_doc2vec[col].str.replace("","0").astype('float')
+        
+        # process the "Vect_D2V"
+        to_pred = pd.DataFrame(list([list(el) for el in res_doc2vec["Vect_D2V"].values]))
+        vect_data = pd.concat([res_doc2vec[additional_columns], to_pred], axis=1)
+        
+        # store in both columns data (predictions + bank_id)
+        dataframe_file["PREDICTION"] = loaded_model.predict(vect_data)
         dataframe_file["BANK_ID"] = output_format
         
-        s3_client = boto3.client('s3')
+        # create a boto3 client
+        s3_client = boto3.client('s3', region_name='eu_west-1')
+        location = {'LocationConstraint':'eu_west-1'}
+        s3_client.create_bucket(Bucket=OUTPUT_BUCKET_NAME, CreateBucketConfiguration=location)
+        
+        # save file locally
         local_file_name = '/tmp/classified_file.xlsx'
         dataframe_file.to_excel(local_file_name, index=None)
         
