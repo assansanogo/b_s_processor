@@ -102,11 +102,11 @@ def classify_liberta_leasing_convert_handler(event, context):
     # download models (doc2vec) from their respective urls
     
     local_model_Doc2Vec_path = download_url(model_Doc2Vec_path, "model")
-    model_Doc2Vec = import_model(local_model_Doc2Vec_path) 
+    #model_Doc2Vec = import_model(local_model_Doc2Vec_path) 
     
     # download models (classifier) from their respective urls
     local_model_NLP_path = download_url(model_NLP_path,"pkl")
-    model_NLP = joblib.load(local_model_NLP_path)
+    #model_NLP = joblib.load(local_model_NLP_path)
     
     f_path = download_url(input_file_url, "xlsx")
     
