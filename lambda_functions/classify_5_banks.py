@@ -152,10 +152,14 @@ def classify_liberta_leasing_convert_handler(event, context):
         dataframe_file["BANK_ID"] = output_format
         
         # create a boto3 client
-        s3_client = boto3.client('s3', region_name='eu-west-1')
-        location = {'LocationConstraint':'eu-west-1'}
-        s3_client.create_bucket(Bucket=OUTPUT_BUCKET_NAME, CreateBucketConfiguration=location)
-        
+        try:
+            s3_client = boto3.client('s3', region_name='eu-west-1')
+            location = {'LocationConstraint':'eu-west-1'}
+            s3_client.create_bucket(Bucket=OUTPUT_BUCKET_NAME, CreateBucketConfiguration=location)
+        except Exception as e:
+            print("the bucket already exists")
+            pass
+
         # save file locally
         local_file_name = '/tmp/classified_file.xlsx'
         dataframe_file.to_excel(local_file_name, index=None)
