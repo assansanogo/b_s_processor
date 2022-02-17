@@ -114,7 +114,7 @@ def classify_liberta_leasing_convert_handler(event, context):
     try:
         # when no error :process and returns json
         dest_file = f_path
-        dataframe_file = pd.read_excel(dest_file)
+        dataframe_file = pd.read_excel(dest_file, engine="openpyxl")
         # the narration columns varies from 1 bank to another
         bank_columns = { "WEMA_BANK": "Narration",
                          "UBA_BANK":"Narration",
