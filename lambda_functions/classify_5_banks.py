@@ -134,7 +134,7 @@ def classify_liberta_leasing_convert_handler(event, context):
                                     model_d2vec=model_doc2vec).reset_index(drop=True)
         
         # load the model
-        sklearn_model_filename = '/tmp/other_model_classifier.pkl'
+        sklearn_model_filename = '/tmp/other_rf_classifier.pkl'
         loaded_model = joblib.load(sklearn_model_filename)
         additional_columns = ["Debit","Credit"]
         # replace special characters in Debit & Credit column
