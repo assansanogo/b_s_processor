@@ -6,7 +6,7 @@ RUN pip3 install tqdm pandas numpy glob2 requests zipfile38 openpyxl fsspec --ta
 WORKDIR "${LAMBDA_TASK_ROOT}"
 RUN git clone https://github.com/assansanogo/b_s_processor.git
 RUN ls "${LAMBDA_TASK_ROOT}"/b_s_processor/lambda_functions
-RUN cp  "${LAMBDA_TASK_ROOT}"/b_s_processor/lambda_functions/convert_to_csv_5_banks.py "${LAMBDA_TASK_ROOT}"
+RUN cp  "${LAMBDA_TASK_ROOT}"/b_s_processor/lambda_functions/neo_analyze_5_banks.py "${LAMBDA_TASK_ROOT}"
 RUN ls "${LAMBDA_TASK_ROOT}"
 
 CMD ["neo_analyze_5_banks.liberta_leasing_analyze_handler"]
