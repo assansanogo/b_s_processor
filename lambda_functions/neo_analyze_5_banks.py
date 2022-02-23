@@ -90,7 +90,7 @@ def util_create_salary_bracket(salary_dollars):
     rules to define the salary bracket
     @param: salary_dollars float monthly salary
     '''
-    if salary_dollars > 50000 and salary_dollars < 200000:
+    if  salary_dollars < 200000:
         bracket = "LOW_EARNER"
     elif salary_dollars > 210000 and salary_dollars < 500000:
         bracket = "LOW_MED_EARNER"
