@@ -330,7 +330,7 @@ def liberta_leasing_analyze_handler(event, context):
 
     filename = download_url(url)
     
-    df = pd.read_excel("/tmp/{filename}")
+    df = pd.read_excel(f"/tmp/{filename}")
     
     df = util_ETL_bank(df, "OTHER")
     
