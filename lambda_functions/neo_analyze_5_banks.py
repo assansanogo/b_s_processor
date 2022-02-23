@@ -76,7 +76,10 @@ def util_ETL_bank(raw_df, bank_name):
         df_no_index['Debits'] =  df_no_index["DEBIT"]
         
     else:
-        df_no_index = pd.DataFrame()
+        df_no_index['Trans. Date'] = df_no_index["Posted Date"]
+        df_no_index['Credits'] = df_no_index["Credit"]
+        df_no_index['Debits'] =  df_no_index["Debit"]
+        
 
     return df_no_index
   
@@ -184,8 +187,10 @@ def return_effective_money(transpose_kpi, month):
     return effective_mon
 
 def return_effective_loan(transpose_kpi, month):
+    print(transpose_kpi)
     effective_loan = \
     transpose_kpi.loc[0,(month,'LOAN')]
+    
     
     return effective_loan
 
@@ -230,15 +235,24 @@ def create_report(df):
     loan_totals = []
 
     for m in months_sorted:
-        #print(m)
-        res_mon = return_effective_money(clean_sorted_analytics, m)
-        res_loan = return_effective_loan(clean_sorted_analytics, m)
-        res_sal = return_effective_salary(clean_sorted_analytics, m)
+        print(m)
+        try:
+            res_mon = return_effective_money(clean_sorted_analytics, m)
+        except:
+            pass
+        try:
+            res_loan = return_effective_loan(clean_sorted_analytics, m)
+        except:
+            pass
+        try:
+            res_sal = return_effective_salary(clean_sorted_analytics, m)
+        except:
+            pass
         #print(res)
         summary_totals.append(res_mon)
         loan_totals.append(res_loan)
         salary_totals.append(res_sal)
-
+    
     # effective calculations (-debit + credit)
     effective_money_dict = dict(zip(months_sorted, summary_totals))
     effective_salary_dict = dict(zip(months_sorted, salary_totals))
@@ -276,25 +290,12 @@ def create_report(df):
             can_take_loan_effective_based_on_money,
             can_take_loan_effective_based_on_salary)
    
-  
-def liberta_leasing_analyze_handler(event, context):
-    '''
-    lambda handler function
-    '''
-    # snippet necessary in case of integration with API GATEWAY (rest api)
-    if "body" in event.keys():
-        event = json.loads(event["body"])
 
-    amount = event["amount"]
-    n_months = event["n_months"]
-    url = event["url"]
-    bank = event["bank"]
 
-    filename = download_url(url)
+def test():
+    df = pd.read_excel("/Users/assansanogo/Downloads/processed_for_BERT.xlsx")
     
-    df = pd.read_csv("/tmp/{filename}")
-    
-    df = util_ETL_bank(df, "WEMA_BANK")
+    df = util_ETL_bank(df, "OTHER")
     
     effective_money_dict,\
     effective_salary_dict,\
@@ -312,4 +313,44 @@ def liberta_leasing_analyze_handler(event, context):
     return {'statusCode' : 200,
             'body': json.dumps({"hello":"world"})
             }
+
+
+def liberta_leasing_analyze_handler(event, context):
+    '''
+    lambda handler function
+    '''
+    # snippet necessary in case of integration with API GATEWAY (rest api)
+    if "body" in event.keys():
+        event = json.loads(event["body"])
+
+    amount = event["amount"]
+    n_months = event["n_months"]
+    url = event["url"]
+    bank = event["bank"]
+
+    filename = download_url(url)
+    
+    df = pd.read_excel("/tmp/{filename}")
+    
+    df = util_ETL_bank(df, "OTHER")
+    
+    effective_money_dict,\
+    effective_salary_dict,\
+    effective_loan_dict,\
+    average_salary,\
+    average_loan,\
+    salary_bracket,\
+    loan_bracket,\
+    loan_over_effective_money_dict,\
+    loan_over_effective_salary_dict,\
+    can_take_loan_effective_based_on_money,\
+    can_take_loan_effective_based_on_salary = create_report(df)
+
+
+    return {'statusCode' : 200,
+            'body': json.dumps({"hello":"world"})
+            }
+
+if __name__ =='__main__':
+    test()
   
