@@ -3,6 +3,7 @@ from datetime import datetime
 import pandas as pd
 import numpy as np
 import json
+import requests
 
 # set of criterias provided by Liberta leasing
 
